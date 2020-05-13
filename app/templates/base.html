@@ -1,0 +1,43 @@
+{% extends "header.html" %}
+{% block base %}
+<div class="content-outside">
+<div class="content-inside">
+<div id='menu_container' class="ui container">
+    <div class="ui stackable secondary container menu">
+        <div class="ui logo shape">
+            <div class="sides">
+                <div class="active ui side">
+                    <!--<img class="logo" src="../static/img/DQueST.png" style="width: 120px; height: 50px;"> -->
+                    <a href='/dquest-flask'><img class="logo" src="{{ url_for('static', filename='img/covid_ppt_logo.png')}}" style="height: 50px;"></a>
+                </div>
+            </div>
+        </div>
+        <div class="right menu">
+            <div class="item">
+                <a href='/dquest-flask'> <i class="home icon"></i>Home </a>
+            </div>
+            <div class="item">
+                <a href='https://github.com/WengLab-InformaticsResearch/covid19-trialfinder' target="_blank"> <i class="github icon"></i>GitHub</a>
+            </div>
+            <div class="item">
+                <a href='http://people.dbmi.columbia.edu/~chw7007/' target="_blank"> <i class="address card icon"></i>About The Team</a>
+            </div>
+            <div class="item">
+                <a href='mailto:amb2453@cumc.columbia.edu' target="_blank"> <i class="envelope icon"></i>Contact Us</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="ui hidden divider"></div>
+<div id='index_container' class="ui container">
+    {% block index %}{% endblock %}
+</div>
+</div>
+</div>
+
+<div class="footer ui inverted vertical segment form-page">
+    <div class="ui center aligned container">Columbia University
+        &copy 2020. All Rights Reserved.</div>
+</div>
+{% endblock %}

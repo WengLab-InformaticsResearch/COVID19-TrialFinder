@@ -1,0 +1,128 @@
+{% extends "base.html" %}
+{% block index %}
+<!--<div id="data_storage_modal" class="modal">-->
+<div id="initial_zero_modal" class="modal">
+    <!-- Modal content -->
+    <div class="homepage-modal-content" style="text-align:center;">
+        <strong>Please Update Your Search Parameters</strong>
+        <p id="initial_zero_message"></p>
+        <div class="ui green submit button" id="enter_button">Return to Home Page</div><br>
+    </div>
+</div>
+
+<div class="ui stackable very relaxed center aligned grid container" id="logo_div">
+    <img class="homepage_logo" src="{{ url_for('static', filename='img/covid_ppt_logo.png')}}">
+</div>
+<div class="ui stackable very relaxed center aligned grid container" id="ctgov_data_div">
+    <div id='hm_stats_container' class='ui container'>
+        <div class="ui message" id="stats" style="border: 1px solid #26b2fd;padding:10px;">
+            <p style="font-size:22px;margin:0px;"><a href="http://www.clinicaltrials.gov" target="_blank">ClinicalTrials.gov</a> currently lists
+            <span id="ctgov_number">{{nnct}}</span> studies targeting COVID-19, and {{nnct_us}} in the United States.</p>
+            <p style="font-size:22px;margin:0px;">COVID-19 Trial Finder helps to find nearby trials that are relevant to you and looking for patients today!</p>
+<!--            <p style="font-size:22px;margin:0px;">COVID-19 Trial Finder helps to search through the {{nnct_local_kb}} trials that are looking for patients today!</p>-->
+        </div>
+    </div>
+</div>
+<div class="ui hidden divider"></div>
+<div class="ui hidden divider"></div>
+<div class="ui stackable very relaxed center aligned grid container">
+    <h2 class="ui header" style="font-size:30px;">Find Clinical Trials in the United States
+    </h2>
+
+    <div id='search_form_container' class='ui container'>
+        <form class="ui form" id="search_form" name="">
+<!--            <div hidden class="field">-->
+<!--                <label>Conditions or Disease (for example: breast cancer)</label>-->
+<!--                <div class="ui search">-->
+<!--                    <input class="prompt" name="term" id="first_focus" placeholder="Breast Cancer" value="COVID-19">-->
+<!--                </div>-->
+<!--            </div>-->
+<!--            <div class="ui hidden divider"></div>-->
+            <div class="field_box">
+                <div class="field_columns">
+                    <label>Your zip code:</label>
+                    <input class="input_field field_text" type="text" id="location_terms" value=""
+                        placeholder="10032" />
+                </div>
+
+                <div class="field_columns">
+                    <label>Search radius (miles):</label>
+                    <input class="input_field field_text" type="number" id="nearby_miles" value="50"
+                        placeholder="50" />
+                </div>
+            </div>
+
+            <div class="collapseContainer field" style="border-radius:6px;">
+                  <div class="collapseHeader ui fluid" style="background:#d3d3d3;border-radius:5px;"><span class="collapseSpan">Optional Search Parameters (Click to Open)</span>
+
+                  </div>
+                  <div class="collapseContent">
+
+                    <div class="field_box">
+                      <div class="checkbox field_columns">
+                          <input id="active_trial_restriction" style="vertical-align: middle;" type="checkbox" checked>
+                          <label>
+                            Restrict trial search to actively recruiting trials
+                        </label>
+                      </div>
+
+                      <div class="field_columns" id="search_term_div">
+                        <label>Keyword search (searches condition, intervention, title, and outcome measure; separate terms using ';'):</label>
+                        <input class="input_field field_text" type="text" id="keyword_search_terms" placeholder="None"/>
+                      </div>
+                      <div class="field_columns">
+                        <label>What type of trial are you searching for (does not affect COVID-19 status)?</label>
+                        <select class="ui fluid dropdown" id="trial_type" name="trial_type">
+                          <option value="all" selected>Any trial for COVID-19 that is looking for patients</option>
+                          <option value="intervention">Interventional/Expanded Access Study (ex. testing a new treatment)</option>
+                          <option value="observation">Observational Study (ex. tracking symptoms or creating a patient registry)</option>
+                        </select>
+                      </div>
+                    </div>
+
+
+                  </div>
+                </div>
+
+            <div class="ui primary ignored button center massive fluid" id="search_button" style="margin-bottom: 0px;">Click Here to Begin Your Trial Search</div>
+            <p style="margin-top: 0px;font-size: 14px;">*Information entered on this site is being stored anonymously for research purposes</p>
+<!--            <div class="ui hidden divider"></div>-->
+            <div id='hm_blurb_container' class='ui container' style="padding-left:10%;padding-right:10%;">
+                <div class="ui message" id="hm_blurb">
+                    <h4 class="center" style="margin-bottom: 5px;">Instructions</h4>
+                    <p style="font-size:14px">
+                        To use this tool, please enter your zip code and search distance above (advanced search features are also
+                        available for clinicians and researchers). You will then be asked a series of 5-6 brief questions to help find the most appropriate
+                        clinical trials that looking for participants. After that, nearby clinical trials will be listed for you. You will also have the
+                        option to answer additional questions about your medical history, surgical history, or previous treatments to further cut down this
+                        list of trials to those you are eligible for.
+                    </p>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<div class="ui stackable very relaxed center aligned grid container" id="acknow_div">
+    <img class="homepage_acknow" src="{{ url_for('static', filename='img/covid_acknowledgements.png')}}">
+</div>
+<div class="ui hidden divider"></div>
+<div id='adv_search_container' class='ui container' style="display:none">
+    {% include "advsearch.html" %}
+</div>
+
+<div class="ui hidden divider"></div>
+<div id="question_container" class="ui container" style="display:none">
+    {% include "qform.html" %}
+</div>
+
+<div class="ui hidden divider"></div>
+<div id='multiquestions_container' class='ui container' style="display:none">
+    {% include "multiquestions.html" %}
+</div>
+
+<div class="ui hidden divider"></div>
+<div id='results_container' class="ui container" style="display:none">
+    {% include "results.html" %}
+</div>
+
+{% endblock %}

@@ -1,0 +1,152 @@
+<div class="ui form">
+    <div class="ui segment sixteen wide column">
+            <div class="ui top attached label">Instructions</div>
+                    <div class="ui container">
+                        <h4>To see your trial results, click the 'Show Eligible Trials' button at the bottom of the page. If you would like to further
+                        reduce the number of eligible trials, please answer the medical questions generated below.</h4>
+                    </div>
+        </div>
+    <div class="ui grid two compact segments horizontal">
+
+        <div class="ui segment ten wide column">
+            <div class="ui top attached label">Medical Question Panel</div>
+            <div class="field" id='question_field'>
+                <h3 class="ui header" style="display:none">
+                    <label id="question_number"></label>
+                </h3>
+                <h3 class="ui header">
+                    <label id="question_title"></label></h3>
+                <select class="ui fluid dropdown" id="include" name="include">
+                    <option value="NULL" selected>I don't know/I don't want to answer</option>
+                    <option value="INC">Yes</option>
+                    <option value="EXC">No</option>
+                </select>
+
+                <div class="ui divider hidden"></div>
+
+                <div class="ui container" id="value_input_container" style="display:none;">
+                    <div class="field">
+                        <h3 class="ui header">
+                            <label>Please enter the value below (can be number or positive/negative result): </label></h3>
+                        <input type="text" id="measurement_value">
+                    </div>
+                </div>
+                <div class="ui container" id="time_container" style="display:none;">
+                    <h3 class="ui header">
+                        <label>Please provide the start and end date (Optional) </label></h3>
+                    <div class="two fields horizontal">
+
+                        <div class="field">
+                            <label>Start date</label>
+                            <div class="ui calendar" id="rangestart">
+                                <div class="ui input left icon">
+                                    <i class="calendar icon"></i>
+                                    <input type="text" placeholder="Start">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="field">
+                            <label>End date (Press today if it is ongoing)</label>
+                            <div class="ui calendar" id="rangeend">
+                                <div class="ui input left icon">
+                                    <i class="calendar icon"></i>
+                                    <input type="text" placeholder="End">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="ui divider hidden"></div>
+                <h3 class="ui header">
+                    <label id="domain_check">What type of question would you like to answer next?</label>
+                </h3>
+                <select class="ui fluid dropdown" id="domain" name="domain">
+                    <option value="condition">Medical History</option>
+                    <option value="measurement">Lab Tests</option>
+                    <option value="drug">Treatment History</option>
+                    <option value="device">Device History</option>
+                    <option value="procedure">Surgical/Procedure History</option>
+                    <option value="all" selected>Any Type of Question</option>
+                </select>
+            </div>
+
+            <div class="ui green submit button" id="confirmbutton">Update Eligible Trial List</div>
+            <div id="close_question" class="ui red button" onclick="">Exit Trial Finder</div><br>
+            <strong>*Click on Green 'Update Eligible Trial List' button to submit your response and update the list of
+            eligible trials</strong>
+
+
+        </div>
+
+        <div class="ui segment six wide column" style="overflow:auto;">
+            <div class="ui top attached label">Medical Question History</div>
+            <div class="ui container" id="go_back_container" >
+                <div class="field">
+                    <div class="ui container" style="font-size:14px;">
+                        <h4> Go back to question: </h4>
+                        <div class="ui divided selection list" id="question_tags">
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!--<div class="ui tiny modal" id="close_modal">-->
+<!--    <div class="header">-->
+<!--        Exit Questionnaire-->
+<!--    </div>-->
+<!--    <div class="content">-->
+<!--        <p> You will exit back out to the original list of trials returned by the search of ClinicalTrials.gov. Do you-->
+<!--            wish to continue? </p>-->
+<!--    </div>-->
+<!--    <div class="actions">-->
+<!--        <div class="ui negative button">-->
+<!--            No-->
+<!--        </div>-->
+<!--        <div class="ui positive right labeled icon button" id="confirm_close_question">-->
+<!--            Yes-->
+<!--            <i class="checkmark icon"></i>-->
+<!--        </div>-->
+<!--    </div>-->
+<!--</div>-->
+
+<div id="close_modal_qform" class="modal">
+    <!-- Modal content -->
+    <div class="close-quest-modal-content" style="text-align:center;">
+        <strong>Exit Questionnaire</strong>
+        <p> You will exit back out to the original list of trials returned by the search of ClinicalTrials.gov. Do you
+            wish to continue? </p>
+        <div class="actions">
+            <div class="ui negative button" id="reject_close_question">
+                No
+            </div>
+            <div class="ui positive right labeled icon button" id="confirm_close_question">
+                Yes
+                <i class="checkmark icon"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--<div class="ui tiny modal" id="found_no_modal" style="position: fixed; top: 30%;">-->
+<div class="zero-trial-modal-content" id="found_no_modal">
+    <strong class="header">
+        Alert
+    </strong>
+    <div class="content">
+        <p> Based on your location and the information you provided, you are not currently eligible for any COVID-19 trials in your area.
+            Please feel free to return to the homepage to adjust the information you entered or stay up-to-date on new trials as they are published!
+        </p>
+    </div>
+    <div class="actions">
+        <div class="ui positive right labeled icon button" id="confirm_close_modal">
+            Yes
+            <i class="checkmark icon"></i>
+        </div>
+    </div>
+</div>
