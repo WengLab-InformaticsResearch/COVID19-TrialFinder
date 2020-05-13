@@ -1,5 +1,5 @@
-# dquest-flask
-dquest implementation using flask
+# COVID-19 Trial Finder
+COVID-19 Trial Finder implementation using flask
 
 ### Install and deploy
 ###### Enviroment
@@ -34,7 +34,7 @@ from flask_cache import make_template_fragment_key
 ###### Change configuration
 ```
 # vi app/lib/config.py
-CRITERIA_HOST = 'elixr.XXX'
+CRITERIA_HOST = 'XXX.XXX'
 CRITERIA_DATABASE = 'trial_knowledge_base'
 CRITEIRA_USERNAME = 'XXX'
 CRITERIA_PASSWORD = 'XXX'
@@ -114,14 +114,6 @@ def index ():
 ## Versioning
 0.0.1
 
-## New features under development
-https://docs.google.com/document/d/1h4PVeiIdWwsHzuxIovAnBbqT4RD-xk59A3ZOaJHKng8/edit
-
-## Publications
-Uder revision
 ## Authors
-Cong Liu, Chi Yuan, Alex Butler, Chunhua Weng
-stormliucong@gmail.com
-
-
-
+Cong Liu, Chi Yuan, Yingcheng Sun, Hao Liu, Alex Butler, Chunhua Weng
+amb2453@cumc.columbia.edu
