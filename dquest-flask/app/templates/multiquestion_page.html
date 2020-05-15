@@ -1,0 +1,1404 @@
+<!DOCTYPE html PUBLIC "-//IETF//DTD HTML//EN">
+<!-- saved from url=(0046)http://impact2.dbmi.columbia.edu/dquest-flask/ -->
+<html lang="en" dir="ltr"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"></head><body class="dimmable" style="">
+
+    <title>DQueST: Dynamic Questionnaire for Search of Clinical Trials. </title>
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="keywords" content="Genetic Phenotype EHR doc2hpo">
+    <meta name="author" <!--="" metadata="" information="" --="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="keywords" content="clinical trials, eligibility criteria, search, dquest">
+    <meta name="robots" content="all, index, follow">
+    <meta name="googlebot" content="all, index, follow"><!-- GOOGLE -->
+    <meta name="msnbot" content="all, index, follow"><!-- MSN -->
+    <meta name="slurp" content="all, index, follow"><!-- YAHOO -->
+    <meta name="copyright" content="columbia university">
+    <meta name="author" content="Cong Liu,  Chi Yuan, Chunhua Weng">
+    <!-- style -->
+    <link rel="stylesheet" href="./DQueST_ Dynamic Questionnaire for Search of Clinical Trials._files/semantic.min.css">
+    <link rel="stylesheet" href="./DQueST_ Dynamic Questionnaire for Search of Clinical Trials._files/calendar.min.css">
+
+    <!-- javascript -->
+    <script src="./DQueST_ Dynamic Questionnaire for Search of Clinical Trials._files/jquery.min.js"></script>
+    <script type="text/javascript" src="./DQueST_ Dynamic Questionnaire for Search of Clinical Trials._files/jquery.blockUI.js"></script>
+    <script src="./DQueST_ Dynamic Questionnaire for Search of Clinical Trials._files/semantic.min.js"></script>
+    <script src="./DQueST_ Dynamic Questionnaire for Search of Clinical Trials._files/calendar.js"></script>
+    <script src="./DQueST_ Dynamic Questionnaire for Search of Clinical Trials._files/moment.min.js"></script>
+
+    <!--<script type="text/javascript" src="../static/js/scripts.js"></script>-->
+    <script src="./DQueST_ Dynamic Questionnaire for Search of Clinical Trials._files/scripts.js"></script>
+
+	<script type="text/javascript"> $SCRIPT_ROOT="/dquest-flask" ; </script> <style type="text/css">
+html, body {
+  height: 100%;
+  margin: 0;
+}
+.content-outside {
+  min-height: 100%;
+}
+.content-inside {
+  padding: 20px;
+  padding-bottom: 50px;
+}
+.footer {
+  height: 50px;
+  margin-top: -50px;
+}
+    </style> 
+ 
+
+
+
+    
+<div class="content-outside">
+  <div class="content-inside">
+<div id="menu_container" class="ui container">
+    <div class="ui stackable secondary container menu">
+        <div class="ui logo shape">
+            <div class="sides">
+                <div class="active ui side">
+                    <!--<img class="logo" src="../static/img/DQueST.png" style="width: 120px; height: 50px;"> -->
+                    <a href="http://impact2.dbmi.columbia.edu/dquest-flask"><img class="logo" src="./DQueST_ Dynamic Questionnaire for Search of Clinical Trials._files/DQueST.png" style="width: 120px; height: 50px;"></a>
+                </div>
+            </div>
+        </div>
+        <div class="right menu">
+            <div class="item">
+                <a href="http://impact2.dbmi.columbia.edu/dquest-flask"> <i class="home icon"></i>Home </a>
+            </div>
+            <div class="item">
+                <a href="http://impact2.dbmi.columbia.edu/dquest-flask/#"> <i class="info icon"></i>Tutorial </a>
+            </div>
+            <div class="item">
+                <a href="https://github.com/stormliucong/dquest-flask" target="_blank"> <i class="github icon"></i>GitHub </a>
+            </div>
+            <div class="item">
+                <a href="http://people.dbmi.columbia.edu/~chw7007/" target="_blank"> <i class="address card icon"></i>About Us </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="ui hidden divider"></div>
+<div id="index_container" class="ui container">
+    
+<div class="ui container" id="dash_board" style="display: none;">
+    <h3>
+        <a href="http://www.clinicaltrials.gov/" target="_blank">ClinicalTrials.gov</a> currently lists <span id="ctgov_number">335,202</span> studies
+    </h3>
+    <h3>
+        Our criteria library is updated on Aug, 2018 with 252,330 studies processed.
+    </h3>
+</div>
+<div class="ui hidden divider"></div>
+<div class="ui hidden divider"></div>
+<div class="ui hidden divider"></div>
+<div class="ui hidden divider"></div>
+<div class="ui stackable very relaxed center aligned grid container">
+    <h2 class="ui header">DQueST: Final Eligible Clinical Trials As Easy As Possible
+    </h2>
+    <div id="search_form_container" class="ui container" style="display: none;">
+        <form class="ui form" id="search_form" name="">
+            <div class="field">
+                <label>Conditions or Disease (for example: breast cancer)</label>
+                <div class="ui search">
+                    <input class="prompt" name="term" id="first_focus" placeholder="Breast Cancer" autocomplete="off">
+                <div class="results"></div></div>
+            </div>
+            <div class="field">
+                <label>Location</label>
+                <input class="input_field field_text" type="text" id="location_terms" value="" placeholder="Los Angeles">
+            </div>
+
+            <div class="ui secondary submit button" id="search_button">Search</div>
+            <div class="ui button" id="advsearch_button">Advanced Search<i class="right chevron icon"></i></div>
+            <div class="ui error message"></div>
+            <div class="ui mini message">
+                <ul class="list">
+                    <li>Pressing the SEARCH button will find only INTERVENTIONAL and ACTIVELY RECRUITING</li>
+                    <li>For additional options, please press the ADVANCED SEARCH button</li>
+                </ul>
+            </div>
+        </form>
+    </div>
+
+</div>
+
+<div class="ui hidden divider"></div>
+<div id="adv_search_container" class="ui container" style="display:none">
+    <!-- ====== Advanced Search Form ====== -->
+<button id="back_button" class="ui red button"><i class="left chevron icon"></i>Close Advanced Search</button>
+
+<form class="ui form" id="adv_search" name="" style="margin-top:50px;">
+    <h2 class="ui dividing header">Basic Search</h2>
+    <div class="three fields">
+        <div class="field">
+            <label>Search Terms</label>
+            <input type="text" class="ui input_field field_text" name="term" id="search_text" value="" placeholder="Use this field to specify words or phrases related to the studies.">
+        </div>
+        <div class="field">
+            <label>StudyIds</label>
+            <input class="ui input_field field_text" type="text" name="id" id="StudyIds" placeholder="NCT00000419">
+        </div>
+        <div class="field">
+            <label>Conditions</label>
+            <input class="ui input_field field_text" type="text" name="cond" id="Conditions" placeholder="breast cancer">
+        </div>
+    </div>
+
+    <div class="three fields">
+        <div class="field">
+            <label>Recruitment</label>
+            <div class="ui fluid dropdown selection" tabindex="0"><select name="recr" id="Recruitment">
+                <option value="" selected="selected">All Studies &nbsp;</option>
+                <option value="Open">Open Studies &nbsp;</option>
+                <option value="Recruiting">&nbsp; -- Recruiting &nbsp;</option>
+                <option value="Not yet recruiting">&nbsp; -- Not yet recruiting &nbsp;</option>
+                <option value="Available">&nbsp; -- Expanded Access: Available &nbsp;</option>
+                <option value="Closed">Closed Studies &nbsp;</option>
+                <option value="Active, not recruiting">&nbsp; -- Active, not recruiting &nbsp;</option>
+                <option value="Completed">&nbsp; -- Completed &nbsp;</option>
+                <option value="Enrolling by invitation">&nbsp; -- Enrolling by invitation &nbsp;</option>
+                <option value="Suspended">&nbsp; -- Suspended &nbsp;</option>
+                <option value="Terminated">&nbsp; -- Terminated &nbsp;</option>
+                <option value="Withdrawn">&nbsp; -- Withdrawn &nbsp;</option>
+                <option value="No longer available">&nbsp; -- Expanded Access: No longer available &nbsp;</option>
+                <option value="Temporarily not available">&nbsp; -- Expanded Access: Temporarily not available &nbsp;</option>
+            </select><i class="dropdown icon"></i><div class="default text">All Studies &nbsp;</div><div class="menu" tabindex="-1"><div class="item" data-value="Open">Open Studies &nbsp;</div><div class="item" data-value="Recruiting">&nbsp; -- Recruiting &nbsp;</div><div class="item" data-value="Not yet recruiting">&nbsp; -- Not yet recruiting &nbsp;</div><div class="item" data-value="Available">&nbsp; -- Expanded Access: Available &nbsp;</div><div class="item" data-value="Closed">Closed Studies &nbsp;</div><div class="item" data-value="Active, not recruiting">&nbsp; -- Active, not recruiting &nbsp;</div><div class="item" data-value="Completed">&nbsp; -- Completed &nbsp;</div><div class="item" data-value="Enrolling by invitation">&nbsp; -- Enrolling by invitation &nbsp;</div><div class="item" data-value="Suspended">&nbsp; -- Suspended &nbsp;</div><div class="item" data-value="Terminated">&nbsp; -- Terminated &nbsp;</div><div class="item" data-value="Withdrawn">&nbsp; -- Withdrawn &nbsp;</div><div class="item" data-value="No longer available">&nbsp; -- Expanded Access: No longer available &nbsp;</div><div class="item" data-value="Temporarily not available">&nbsp; -- Expanded Access: Temporarily not available &nbsp;</div></div></div>
+        </div>
+        <div class="field">
+        <label>Study Results</label>
+        <div class="ui fluid dropdown selection" tabindex="0"><select name="rslt" id="StudyResults">
+            <option value="">All Studies &nbsp;</option>
+            <option value="With">Studies With Results &nbsp;</option>
+            <option value="Without">Studies Without Results &nbsp;</option>
+        </select><i class="dropdown icon"></i><div class="default text">All Studies &nbsp;</div><div class="menu" tabindex="-1"><div class="item" data-value="With">Studies With Results &nbsp;</div><div class="item" data-value="Without">Studies Without Results &nbsp;</div></div></div>
+        </div>
+        <div class="field">
+        <label>Study Type</label>
+        <div class="ui fluid dropdown selection" tabindex="0"><select name="type" id="StudyType">
+            <option value="">All Studies &nbsp;</option>
+            <option value="Intr">Interventional Studies &nbsp;</option>
+            <option value="Obsr">Observational Studies &nbsp;</option>
+            <option value="PReg">&nbsp; -- Patient Registries &nbsp;</option>
+            <option value="Expn">Expanded Access Studies &nbsp;</option>
+        </select><i class="dropdown icon"></i><div class="default text">All Studies &nbsp;</div><div class="menu" tabindex="-1"><div class="item" data-value="Intr">Interventional Studies &nbsp;</div><div class="item" data-value="Obsr">Observational Studies &nbsp;</div><div class="item" data-value="PReg">&nbsp; -- Patient Registries &nbsp;</div><div class="item" data-value="Expn">Expanded Access Studies &nbsp;</div></div></div>
+        </div>
+    </div>
+
+
+
+
+    <h2 class="ui dividing header">Targeted Search</h2>
+
+    <div class="three fields">
+
+        <div class="field">
+            <label>Interventions</label>
+            <input class="ui input_field field_text" type="text" name="intr" id="Interventions" placeholder="clofibrate">
+        </div>
+        <div class="field">
+            <label>Title Acronym/Titles</label>
+            <input class="ui input_field field_text" type="text" name="titles" id="Titles" placeholder="WHI">
+        </div>
+        <div class="field">
+            <label>Outcome Measures</label>
+            <input class="ui input_field field_text" type="text" name="outc" id="OutcomeMeasures" placeholder="ejection fraction">
+        </div>
+    </div>
+
+    <div class="two fields">
+        <div class="field">
+            <label>Sponsor/Collaborators
+                <span>
+                    <div class="ui checkbox">
+                    <input id="SponsorsExact" type="checkbox" name="spons_ex" value="Y">
+                    <label>exact match only</label>
+                    </div>
+                </span>
+
+            </label>
+            <input class="ui input_field field_text" type="text" name="spons" id="Sponsors" placeholder="Bristol-Myers Squibb">
+        </div>
+        <div class="field">
+            <label>Sponsor (Lead)
+            <span>
+                <div class="ui checkbox">
+                    <input type="checkbox" name="lead_ex" id="LeadSponsorsExact" value="Y">
+                    <label>exact match only</label>
+                </div>
+            </span>
+            </label>
+            <input class="ui input_field field_text" type="text" name="lead" id="LeadSponsors" placeholder="National Cancer Institute">
+        </div>
+    </div>
+
+    <h2 class="ui dividing header">Locations:</h2>
+    <div class="field">
+        <label>Location Terms</label>
+        <input class="input_field field_text" type="text" name="locn" id="LocationTerms" value="" placeholder="Los Angeles">
+    </div>
+    <div class="six fields">
+        <div class="field">
+            <label>State 1</label>
+            <div class="ui fluid dropdown selection" tabindex="0"><select name="state1" id="State1">
+                <option value="" selected="selected">--- Optional --- &nbsp;</option>
+                <option value="NA:US:AL">United States, Alabama &nbsp;</option>
+                <option value="NA:US:AK">United States, Alaska &nbsp;</option>
+                <option value="NA:US:AZ">United States, Arizona &nbsp;</option>
+                <option value="NA:US:AR">United States, Arkansas &nbsp;</option>
+                <option value="NA:US:CA">United States, California &nbsp;</option>
+                <option value="NA:US:CO">United States, Colorado &nbsp;</option>
+                <option value="NA:US:CT">United States, Connecticut &nbsp;</option>
+                <option value="NA:US:DE">United States, Delaware &nbsp;</option>
+                <option value="NA:US:DC">United States, District of Columbia &nbsp;</option>
+                <option value="NA:US:FL">United States, Florida &nbsp;</option>
+                <option value="NA:US:GA">United States, Georgia &nbsp;</option>
+                <option value="NA:US:HI">United States, Hawaii &nbsp;</option>
+                <option value="NA:US:ID">United States, Idaho &nbsp;</option>
+                <option value="NA:US:IL">United States, Illinois &nbsp;</option>
+                <option value="NA:US:IN">United States, Indiana &nbsp;</option>
+                <option value="NA:US:IA">United States, Iowa &nbsp;</option>
+                <option value="NA:US:KS">United States, Kansas &nbsp;</option>
+                <option value="NA:US:KY">United States, Kentucky &nbsp;</option>
+                <option value="NA:US:LA">United States, Louisiana &nbsp;</option>
+                <option value="NA:US:ME">United States, Maine &nbsp;</option>
+                <option value="NA:US:MD">United States, Maryland &nbsp;</option>
+                <option value="NA:US:MA">United States, Massachusetts &nbsp;</option>
+                <option value="NA:US:MI">United States, Michigan &nbsp;</option>
+                <option value="NA:US:MN">United States, Minnesota &nbsp;</option>
+                <option value="NA:US:MS">United States, Mississippi &nbsp;</option>
+                <option value="NA:US:MO">United States, Missouri &nbsp;</option>
+                <option value="NA:US:MT">United States, Montana &nbsp;</option>
+                <option value="NA:US:NE">United States, Nebraska &nbsp;</option>
+                <option value="NA:US:NV">United States, Nevada &nbsp;</option>
+                <option value="NA:US:NH">United States, New Hampshire &nbsp;</option>
+                <option value="NA:US:NJ">United States, New Jersey &nbsp;</option>
+                <option value="NA:US:NM">United States, New Mexico &nbsp;</option>
+                <option value="NA:US:NY">United States, New York &nbsp;</option>
+                <option value="NA:US:NC">United States, North Carolina &nbsp;</option>
+                <option value="NA:US:ND">United States, North Dakota &nbsp;</option>
+                <option value="NA:US:OH">United States, Ohio &nbsp;</option>
+                <option value="NA:US:OK">United States, Oklahoma &nbsp;</option>
+                <option value="NA:US:OR">United States, Oregon &nbsp;</option>
+                <option value="NA:US:PA">United States, Pennsylvania &nbsp;</option>
+                <option value="NA:US:RI">United States, Rhode Island &nbsp;</option>
+                <option value="NA:US:SC">United States, South Carolina &nbsp;</option>
+                <option value="NA:US:SD">United States, South Dakota &nbsp;</option>
+                <option value="NA:US:TN">United States, Tennessee &nbsp;</option>
+                <option value="NA:US:TX">United States, Texas &nbsp;</option>
+                <option value="NA:US:UT">United States, Utah &nbsp;</option>
+                <option value="NA:US:VT">United States, Vermont &nbsp;</option>
+                <option value="NA:US:VA">United States, Virginia &nbsp;</option>
+                <option value="NA:US:WA">United States, Washington &nbsp;</option>
+                <option value="NA:US:WV">United States, West Virginia &nbsp;</option>
+                <option value="NA:US:WI">United States, Wisconsin &nbsp;</option>
+                <option value="NA:US:WY">United States, Wyoming &nbsp;</option>
+                <option value="NA:CA:AB">Canada, Alberta &nbsp;</option>
+                <option value="NA:CA:BC">Canada, British Columbia &nbsp;</option>
+                <option value="NA:CA:MB">Canada, Manitoba &nbsp;</option>
+                <option value="NA:CA:NB">Canada, New Brunswick &nbsp;</option>
+                <option value="NA:CA:NF">Canada, Newfoundland and Labrador &nbsp;</option>
+                <option value="NA:CA:NS">Canada, Nova Scotia &nbsp;</option>
+                <option value="NA:CA:ON">Canada, Ontario &nbsp;</option>
+                <option value="NA:CA:PE">Canada, Prince Edward Island &nbsp;</option>
+                <option value="NA:CA:QC">Canada, Quebec &nbsp;</option>
+                <option value="NA:CA:SK">Canada, Saskatchewan &nbsp;</option>
+                <option value="PA:AU:AC">Australia, Australian Capital Territory &nbsp;</option>
+                <option value="PA:AU:SW">Australia, New South Wales &nbsp;</option>
+                <option value="PA:AU:NT">Australia, Northern Territory &nbsp;</option>
+                <option value="PA:AU:QL">Australia, Queensland &nbsp;</option>
+                <option value="PA:AU:SA">Australia, South Australia &nbsp;</option>
+                <option value="PA:AU:TA">Australia, Tasmania &nbsp;</option>
+                <option value="PA:AU:VC">Australia, Victoria &nbsp;</option>
+                <option value="PA:AU:WA">Australia, Western Australia &nbsp;</option>
+            </select><i class="dropdown icon"></i><div class="default text">--- Optional --- &nbsp;</div><div class="menu" tabindex="-1"><div class="item" data-value="NA:US:AL">United States, Alabama &nbsp;</div><div class="item" data-value="NA:US:AK">United States, Alaska &nbsp;</div><div class="item" data-value="NA:US:AZ">United States, Arizona &nbsp;</div><div class="item" data-value="NA:US:AR">United States, Arkansas &nbsp;</div><div class="item" data-value="NA:US:CA">United States, California &nbsp;</div><div class="item" data-value="NA:US:CO">United States, Colorado &nbsp;</div><div class="item" data-value="NA:US:CT">United States, Connecticut &nbsp;</div><div class="item" data-value="NA:US:DE">United States, Delaware &nbsp;</div><div class="item" data-value="NA:US:DC">United States, District of Columbia &nbsp;</div><div class="item" data-value="NA:US:FL">United States, Florida &nbsp;</div><div class="item" data-value="NA:US:GA">United States, Georgia &nbsp;</div><div class="item" data-value="NA:US:HI">United States, Hawaii &nbsp;</div><div class="item" data-value="NA:US:ID">United States, Idaho &nbsp;</div><div class="item" data-value="NA:US:IL">United States, Illinois &nbsp;</div><div class="item" data-value="NA:US:IN">United States, Indiana &nbsp;</div><div class="item" data-value="NA:US:IA">United States, Iowa &nbsp;</div><div class="item" data-value="NA:US:KS">United States, Kansas &nbsp;</div><div class="item" data-value="NA:US:KY">United States, Kentucky &nbsp;</div><div class="item" data-value="NA:US:LA">United States, Louisiana &nbsp;</div><div class="item" data-value="NA:US:ME">United States, Maine &nbsp;</div><div class="item" data-value="NA:US:MD">United States, Maryland &nbsp;</div><div class="item" data-value="NA:US:MA">United States, Massachusetts &nbsp;</div><div class="item" data-value="NA:US:MI">United States, Michigan &nbsp;</div><div class="item" data-value="NA:US:MN">United States, Minnesota &nbsp;</div><div class="item" data-value="NA:US:MS">United States, Mississippi &nbsp;</div><div class="item" data-value="NA:US:MO">United States, Missouri &nbsp;</div><div class="item" data-value="NA:US:MT">United States, Montana &nbsp;</div><div class="item" data-value="NA:US:NE">United States, Nebraska &nbsp;</div><div class="item" data-value="NA:US:NV">United States, Nevada &nbsp;</div><div class="item" data-value="NA:US:NH">United States, New Hampshire &nbsp;</div><div class="item" data-value="NA:US:NJ">United States, New Jersey &nbsp;</div><div class="item" data-value="NA:US:NM">United States, New Mexico &nbsp;</div><div class="item" data-value="NA:US:NY">United States, New York &nbsp;</div><div class="item" data-value="NA:US:NC">United States, North Carolina &nbsp;</div><div class="item" data-value="NA:US:ND">United States, North Dakota &nbsp;</div><div class="item" data-value="NA:US:OH">United States, Ohio &nbsp;</div><div class="item" data-value="NA:US:OK">United States, Oklahoma &nbsp;</div><div class="item" data-value="NA:US:OR">United States, Oregon &nbsp;</div><div class="item" data-value="NA:US:PA">United States, Pennsylvania &nbsp;</div><div class="item" data-value="NA:US:RI">United States, Rhode Island &nbsp;</div><div class="item" data-value="NA:US:SC">United States, South Carolina &nbsp;</div><div class="item" data-value="NA:US:SD">United States, South Dakota &nbsp;</div><div class="item" data-value="NA:US:TN">United States, Tennessee &nbsp;</div><div class="item" data-value="NA:US:TX">United States, Texas &nbsp;</div><div class="item" data-value="NA:US:UT">United States, Utah &nbsp;</div><div class="item" data-value="NA:US:VT">United States, Vermont &nbsp;</div><div class="item" data-value="NA:US:VA">United States, Virginia &nbsp;</div><div class="item" data-value="NA:US:WA">United States, Washington &nbsp;</div><div class="item" data-value="NA:US:WV">United States, West Virginia &nbsp;</div><div class="item" data-value="NA:US:WI">United States, Wisconsin &nbsp;</div><div class="item" data-value="NA:US:WY">United States, Wyoming &nbsp;</div><div class="item" data-value="NA:CA:AB">Canada, Alberta &nbsp;</div><div class="item" data-value="NA:CA:BC">Canada, British Columbia &nbsp;</div><div class="item" data-value="NA:CA:MB">Canada, Manitoba &nbsp;</div><div class="item" data-value="NA:CA:NB">Canada, New Brunswick &nbsp;</div><div class="item" data-value="NA:CA:NF">Canada, Newfoundland and Labrador &nbsp;</div><div class="item" data-value="NA:CA:NS">Canada, Nova Scotia &nbsp;</div><div class="item" data-value="NA:CA:ON">Canada, Ontario &nbsp;</div><div class="item" data-value="NA:CA:PE">Canada, Prince Edward Island &nbsp;</div><div class="item" data-value="NA:CA:QC">Canada, Quebec &nbsp;</div><div class="item" data-value="NA:CA:SK">Canada, Saskatchewan &nbsp;</div><div class="item" data-value="PA:AU:AC">Australia, Australian Capital Territory &nbsp;</div><div class="item" data-value="PA:AU:SW">Australia, New South Wales &nbsp;</div><div class="item" data-value="PA:AU:NT">Australia, Northern Territory &nbsp;</div><div class="item" data-value="PA:AU:QL">Australia, Queensland &nbsp;</div><div class="item" data-value="PA:AU:SA">Australia, South Australia &nbsp;</div><div class="item" data-value="PA:AU:TA">Australia, Tasmania &nbsp;</div><div class="item" data-value="PA:AU:VC">Australia, Victoria &nbsp;</div><div class="item" data-value="PA:AU:WA">Australia, Western Australia &nbsp;</div></div></div>
+        </div>
+        <div class="field">
+            <label>Country 1</label>
+            <div class="ui fluid dropdown selection" tabindex="0"><select name="country1" id="Country1">
+                <option value="" selected="selected">--- Optional --- &nbsp;</option>
+                <option value="NA:US">United States &nbsp;</option>
+                <option value="SS:AF">Afghanistan &nbsp;</option>
+                <option value="EU:AL">Albania &nbsp;</option>
+                <option value="AF:DZ">Algeria &nbsp;</option>
+                <option value="PA:AS">American Samoa &nbsp;</option>
+                <option value="EU:AD">Andorra &nbsp;</option>
+                <option value="AF:AO">Angola &nbsp;</option>
+                <option value="SA:AR">Argentina &nbsp;</option>
+                <option value="NS:AM">Armenia &nbsp;</option>
+                <option value="PA:AU">Australia &nbsp;</option>
+                <option value="EU:AT">Austria &nbsp;</option>
+                <option value="NS:AZ">Azerbaijan &nbsp;</option>
+                <option value="CA:BS">Bahamas &nbsp;</option>
+                <option value="ME:BH">Bahrain &nbsp;</option>
+                <option value="SS:BD">Bangladesh &nbsp;</option>
+                <option value="CA:BB">Barbados &nbsp;</option>
+                <option value="NS:BY">Belarus &nbsp;</option>
+                <option value="EU:BE">Belgium &nbsp;</option>
+                <option value="CA:BZ">Belize &nbsp;</option>
+                <option value="AF:BJ">Benin &nbsp;</option>
+                <option value="CA:BM">Bermuda &nbsp;</option>
+                <option value="SS:BT">Bhutan &nbsp;</option>
+                <option value="SA:BO">Bolivia &nbsp;</option>
+                <option value="EU:BA">Bosnia and Herzegovina &nbsp;</option>
+                <option value="AF:BW">Botswana &nbsp;</option>
+                <option value="SA:BR">Brazil &nbsp;</option>
+                <option value="SE:BN">Brunei Darussalam &nbsp;</option>
+                <option value="EU:BG">Bulgaria &nbsp;</option>
+                <option value="AF:BF">Burkina Faso &nbsp;</option>
+                <option value="AF:BI">Burundi &nbsp;</option>
+                <option value="SE:KH">Cambodia &nbsp;</option>
+                <option value="AF:CM">Cameroon &nbsp;</option>
+                <option value="NA:CA">Canada &nbsp;</option>
+                <option value="AF:CF">Central African Republic &nbsp;</option>
+                <option value="AF:TD">Chad &nbsp;</option>
+                <option value="SA:CL">Chile &nbsp;</option>
+                <option value="ES:CN">China &nbsp;</option>
+                <option value="SA:CO">Colombia &nbsp;</option>
+                <option value="AF:CG">Congo &nbsp;</option>
+                <option value="AF:CD">Congo, The Democratic Republic of the &nbsp;</option>
+                <option value="CA:CR">Costa Rica &nbsp;</option>
+                <option value="EU:HR">Croatia &nbsp;</option>
+                <option value="CA:CU">Cuba &nbsp;</option>
+                <option value="ME:CY">Cyprus &nbsp;</option>
+                <option value="EU:CZ">Czech Republic &nbsp;</option>
+                <option value="AF:CI">Côte D'Ivoire &nbsp;</option>
+                <option value="EU:DK">Denmark &nbsp;</option>
+                <option value="AF:DJ">Djibouti &nbsp;</option>
+                <option value="CA:DO">Dominican Republic &nbsp;</option>
+                <option value="SA:EC">Ecuador &nbsp;</option>
+                <option value="AF:EG">Egypt &nbsp;</option>
+                <option value="CA:SV">El Salvador &nbsp;</option>
+                <option value="AF:GQ">Equatorial Guinea &nbsp;</option>
+                <option value="EU:EE">Estonia &nbsp;</option>
+                <option value="AF:ET">Ethiopia &nbsp;</option>
+                <option value="PA:FJ">Fiji &nbsp;</option>
+                <option value="EU:FI">Finland &nbsp;</option>
+                <option value="EU:CS">Former Serbia and Montenegro &nbsp;</option>
+                <option value="EU:YU">Former Yugoslavia &nbsp;</option>
+                <option value="EU:FR">France &nbsp;</option>
+                <option value="PA:PF">French Polynesia &nbsp;</option>
+                <option value="AF:GA">Gabon &nbsp;</option>
+                <option value="AF:GM">Gambia &nbsp;</option>
+                <option value="NS:GE">Georgia &nbsp;</option>
+                <option value="EU:DE">Germany &nbsp;</option>
+                <option value="AF:GH">Ghana &nbsp;</option>
+                <option value="EU:GR">Greece &nbsp;</option>
+                <option value="CA:GD">Grenada &nbsp;</option>
+                <option value="CA:GP">Guadeloupe &nbsp;</option>
+                <option value="CA:GT">Guatemala &nbsp;</option>
+                <option value="AF:GN">Guinea &nbsp;</option>
+                <option value="AF:GW">Guinea-Bissau &nbsp;</option>
+                <option value="SA:GY">Guyana &nbsp;</option>
+                <option value="CA:HT">Haiti &nbsp;</option>
+                <option value="EU:VA">Holy See (Vatican City State) &nbsp;</option>
+                <option value="CA:HN">Honduras &nbsp;</option>
+                <option value="ES:HK">Hong Kong &nbsp;</option>
+                <option value="EU:HU">Hungary &nbsp;</option>
+                <option value="EU:IS">Iceland &nbsp;</option>
+                <option value="SS:IN">India &nbsp;</option>
+                <option value="SE:ID">Indonesia &nbsp;</option>
+                <option value="ME:IR">Iran, Islamic Republic of &nbsp;</option>
+                <option value="ME:IQ">Iraq &nbsp;</option>
+                <option value="EU:IE">Ireland &nbsp;</option>
+                <option value="ME:IL">Israel &nbsp;</option>
+                <option value="EU:IT">Italy &nbsp;</option>
+                <option value="CA:JM">Jamaica &nbsp;</option>
+                <option value="ES:JP">Japan &nbsp;</option>
+                <option value="ME:JO">Jordan &nbsp;</option>
+                <option value="NS:KZ">Kazakhstan &nbsp;</option>
+                <option value="AF:KE">Kenya &nbsp;</option>
+                <option value="ES:KP">Korea, Democratic People's Republic of &nbsp;</option>
+                <option value="ES:KR">Korea, Republic of &nbsp;</option>
+                <option value="ME:KW">Kuwait &nbsp;</option>
+                <option value="NS:KG">Kyrgyzstan &nbsp;</option>
+                <option value="SE:LA">Lao People's Democratic Republic &nbsp;</option>
+                <option value="EU:LV">Latvia &nbsp;</option>
+                <option value="ME:LB">Lebanon &nbsp;</option>
+                <option value="AF:LS">Lesotho &nbsp;</option>
+                <option value="AF:LR">Liberia &nbsp;</option>
+                <option value="AF:LY">Libyan Arab Jamahiriya &nbsp;</option>
+                <option value="EU:LT">Lithuania &nbsp;</option>
+                <option value="EU:LU">Luxembourg &nbsp;</option>
+                <option value="EU:MK">Macedonia, The Former Yugoslav Republic of &nbsp;</option>
+                <option value="AF:MG">Madagascar &nbsp;</option>
+                <option value="AF:MW">Malawi &nbsp;</option>
+                <option value="SE:MY">Malaysia &nbsp;</option>
+                <option value="AF:ML">Mali &nbsp;</option>
+                <option value="EU:MT">Malta &nbsp;</option>
+                <option value="CA:MQ">Martinique &nbsp;</option>
+                <option value="AF:MR">Mauritania &nbsp;</option>
+                <option value="AF:MU">Mauritius &nbsp;</option>
+                <option value="NA:MX">Mexico &nbsp;</option>
+                <option value="NS:MD">Moldova, Republic of &nbsp;</option>
+                <option value="EU:MC">Monaco &nbsp;</option>
+                <option value="ES:MN">Mongolia &nbsp;</option>
+                <option value="EU:ME">Montenegro &nbsp;</option>
+                <option value="AF:MA">Morocco &nbsp;</option>
+                <option value="AF:MZ">Mozambique &nbsp;</option>
+                <option value="SE:MM">Myanmar &nbsp;</option>
+                <option value="SS:NP">Nepal &nbsp;</option>
+                <option value="EU:NL">Netherlands &nbsp;</option>
+                <option value="EU:AN">Netherlands Antilles &nbsp;</option>
+                <option value="PA:NC">New Caledonia &nbsp;</option>
+                <option value="PA:NZ">New Zealand &nbsp;</option>
+                <option value="CA:NI">Nicaragua &nbsp;</option>
+                <option value="AF:NE">Niger &nbsp;</option>
+                <option value="AF:NG">Nigeria &nbsp;</option>
+                <option value="PA:MP">Northern Mariana Islands &nbsp;</option>
+                <option value="EU:NO">Norway &nbsp;</option>
+                <option value="ME:OM">Oman &nbsp;</option>
+                <option value="SS:PK">Pakistan &nbsp;</option>
+                <option value="CA:PA">Panama &nbsp;</option>
+                <option value="PA:PG">Papua New Guinea &nbsp;</option>
+                <option value="SA:PY">Paraguay &nbsp;</option>
+                <option value="SA:PE">Peru &nbsp;</option>
+                <option value="SE:PH">Philippines &nbsp;</option>
+                <option value="EU:PL">Poland &nbsp;</option>
+                <option value="EU:PT">Portugal &nbsp;</option>
+                <option value="CA:PR">Puerto Rico &nbsp;</option>
+                <option value="ME:QA">Qatar &nbsp;</option>
+                <option value="EU:RO">Romania &nbsp;</option>
+                <option value="NS:RU">Russian Federation &nbsp;</option>
+                <option value="AF:RW">Rwanda &nbsp;</option>
+                <option value="AF:RE">Réunion &nbsp;</option>
+                <option value="CA:KN">Saint Kitts and Nevis &nbsp;</option>
+                <option value="ME:SA">Saudi Arabia &nbsp;</option>
+                <option value="AF:SN">Senegal &nbsp;</option>
+                <option value="EU:RS">Serbia &nbsp;</option>
+                <option value="AF:SL">Sierra Leone &nbsp;</option>
+                <option value="SE:SG">Singapore &nbsp;</option>
+                <option value="EU:SK">Slovakia &nbsp;</option>
+                <option value="EU:SI">Slovenia &nbsp;</option>
+                <option value="PA:SB">Solomon Islands &nbsp;</option>
+                <option value="AF:ZA">South Africa &nbsp;</option>
+                <option value="EU:ES">Spain &nbsp;</option>
+                <option value="SS:LK">Sri Lanka &nbsp;</option>
+                <option value="AF:SD">Sudan &nbsp;</option>
+                <option value="AF:SZ">Swaziland &nbsp;</option>
+                <option value="EU:SE">Sweden &nbsp;</option>
+                <option value="EU:CH">Switzerland &nbsp;</option>
+                <option value="ME:SY">Syrian Arab Republic &nbsp;</option>
+                <option value="ES:TW">Taiwan &nbsp;</option>
+                <option value="AF:TZ">Tanzania &nbsp;</option>
+                <option value="SE:TH">Thailand &nbsp;</option>
+                <option value="AF:TG">Togo &nbsp;</option>
+                <option value="CA:TT">Trinidad and Tobago &nbsp;</option>
+                <option value="AF:TN">Tunisia &nbsp;</option>
+                <option value="ME:TR">Turkey &nbsp;</option>
+                <option value="AF:UG">Uganda &nbsp;</option>
+                <option value="NS:UA">Ukraine &nbsp;</option>
+                <option value="ME:AE">United Arab Emirates &nbsp;</option>
+                <option value="EU:GB">United Kingdom &nbsp;</option>
+                <option value="NA:US">United States &nbsp;</option>
+                <option value="SA:UY">Uruguay &nbsp;</option>
+                <option value="NS:UZ">Uzbekistan &nbsp;</option>
+                <option value="PA:VU">Vanuatu &nbsp;</option>
+                <option value="SA:VE">Venezuela &nbsp;</option>
+                <option value="SE:VN">Vietnam &nbsp;</option>
+                <option value="CA:VI">Virgin Islands (U.S.) &nbsp;</option>
+                <option value="ME:YE">Yemen &nbsp;</option>
+                <option value="AF:ZM">Zambia &nbsp;</option>
+                <option value="AF:ZW">Zimbabwe &nbsp;</option>
+            </select><i class="dropdown icon"></i><div class="default text">--- Optional --- &nbsp;</div><div class="menu" tabindex="-1"><div class="item" data-value="NA:US">United States &nbsp;</div><div class="item" data-value="SS:AF">Afghanistan &nbsp;</div><div class="item" data-value="EU:AL">Albania &nbsp;</div><div class="item" data-value="AF:DZ">Algeria &nbsp;</div><div class="item" data-value="PA:AS">American Samoa &nbsp;</div><div class="item" data-value="EU:AD">Andorra &nbsp;</div><div class="item" data-value="AF:AO">Angola &nbsp;</div><div class="item" data-value="SA:AR">Argentina &nbsp;</div><div class="item" data-value="NS:AM">Armenia &nbsp;</div><div class="item" data-value="PA:AU">Australia &nbsp;</div><div class="item" data-value="EU:AT">Austria &nbsp;</div><div class="item" data-value="NS:AZ">Azerbaijan &nbsp;</div><div class="item" data-value="CA:BS">Bahamas &nbsp;</div><div class="item" data-value="ME:BH">Bahrain &nbsp;</div><div class="item" data-value="SS:BD">Bangladesh &nbsp;</div><div class="item" data-value="CA:BB">Barbados &nbsp;</div><div class="item" data-value="NS:BY">Belarus &nbsp;</div><div class="item" data-value="EU:BE">Belgium &nbsp;</div><div class="item" data-value="CA:BZ">Belize &nbsp;</div><div class="item" data-value="AF:BJ">Benin &nbsp;</div><div class="item" data-value="CA:BM">Bermuda &nbsp;</div><div class="item" data-value="SS:BT">Bhutan &nbsp;</div><div class="item" data-value="SA:BO">Bolivia &nbsp;</div><div class="item" data-value="EU:BA">Bosnia and Herzegovina &nbsp;</div><div class="item" data-value="AF:BW">Botswana &nbsp;</div><div class="item" data-value="SA:BR">Brazil &nbsp;</div><div class="item" data-value="SE:BN">Brunei Darussalam &nbsp;</div><div class="item" data-value="EU:BG">Bulgaria &nbsp;</div><div class="item" data-value="AF:BF">Burkina Faso &nbsp;</div><div class="item" data-value="AF:BI">Burundi &nbsp;</div><div class="item" data-value="SE:KH">Cambodia &nbsp;</div><div class="item" data-value="AF:CM">Cameroon &nbsp;</div><div class="item" data-value="NA:CA">Canada &nbsp;</div><div class="item" data-value="AF:CF">Central African Republic &nbsp;</div><div class="item" data-value="AF:TD">Chad &nbsp;</div><div class="item" data-value="SA:CL">Chile &nbsp;</div><div class="item" data-value="ES:CN">China &nbsp;</div><div class="item" data-value="SA:CO">Colombia &nbsp;</div><div class="item" data-value="AF:CG">Congo &nbsp;</div><div class="item" data-value="AF:CD">Congo, The Democratic Republic of the &nbsp;</div><div class="item" data-value="CA:CR">Costa Rica &nbsp;</div><div class="item" data-value="EU:HR">Croatia &nbsp;</div><div class="item" data-value="CA:CU">Cuba &nbsp;</div><div class="item" data-value="ME:CY">Cyprus &nbsp;</div><div class="item" data-value="EU:CZ">Czech Republic &nbsp;</div><div class="item" data-value="AF:CI">Côte D'Ivoire &nbsp;</div><div class="item" data-value="EU:DK">Denmark &nbsp;</div><div class="item" data-value="AF:DJ">Djibouti &nbsp;</div><div class="item" data-value="CA:DO">Dominican Republic &nbsp;</div><div class="item" data-value="SA:EC">Ecuador &nbsp;</div><div class="item" data-value="AF:EG">Egypt &nbsp;</div><div class="item" data-value="CA:SV">El Salvador &nbsp;</div><div class="item" data-value="AF:GQ">Equatorial Guinea &nbsp;</div><div class="item" data-value="EU:EE">Estonia &nbsp;</div><div class="item" data-value="AF:ET">Ethiopia &nbsp;</div><div class="item" data-value="PA:FJ">Fiji &nbsp;</div><div class="item" data-value="EU:FI">Finland &nbsp;</div><div class="item" data-value="EU:CS">Former Serbia and Montenegro &nbsp;</div><div class="item" data-value="EU:YU">Former Yugoslavia &nbsp;</div><div class="item" data-value="EU:FR">France &nbsp;</div><div class="item" data-value="PA:PF">French Polynesia &nbsp;</div><div class="item" data-value="AF:GA">Gabon &nbsp;</div><div class="item" data-value="AF:GM">Gambia &nbsp;</div><div class="item" data-value="NS:GE">Georgia &nbsp;</div><div class="item" data-value="EU:DE">Germany &nbsp;</div><div class="item" data-value="AF:GH">Ghana &nbsp;</div><div class="item" data-value="EU:GR">Greece &nbsp;</div><div class="item" data-value="CA:GD">Grenada &nbsp;</div><div class="item" data-value="CA:GP">Guadeloupe &nbsp;</div><div class="item" data-value="CA:GT">Guatemala &nbsp;</div><div class="item" data-value="AF:GN">Guinea &nbsp;</div><div class="item" data-value="AF:GW">Guinea-Bissau &nbsp;</div><div class="item" data-value="SA:GY">Guyana &nbsp;</div><div class="item" data-value="CA:HT">Haiti &nbsp;</div><div class="item" data-value="EU:VA">Holy See (Vatican City State) &nbsp;</div><div class="item" data-value="CA:HN">Honduras &nbsp;</div><div class="item" data-value="ES:HK">Hong Kong &nbsp;</div><div class="item" data-value="EU:HU">Hungary &nbsp;</div><div class="item" data-value="EU:IS">Iceland &nbsp;</div><div class="item" data-value="SS:IN">India &nbsp;</div><div class="item" data-value="SE:ID">Indonesia &nbsp;</div><div class="item" data-value="ME:IR">Iran, Islamic Republic of &nbsp;</div><div class="item" data-value="ME:IQ">Iraq &nbsp;</div><div class="item" data-value="EU:IE">Ireland &nbsp;</div><div class="item" data-value="ME:IL">Israel &nbsp;</div><div class="item" data-value="EU:IT">Italy &nbsp;</div><div class="item" data-value="CA:JM">Jamaica &nbsp;</div><div class="item" data-value="ES:JP">Japan &nbsp;</div><div class="item" data-value="ME:JO">Jordan &nbsp;</div><div class="item" data-value="NS:KZ">Kazakhstan &nbsp;</div><div class="item" data-value="AF:KE">Kenya &nbsp;</div><div class="item" data-value="ES:KP">Korea, Democratic People's Republic of &nbsp;</div><div class="item" data-value="ES:KR">Korea, Republic of &nbsp;</div><div class="item" data-value="ME:KW">Kuwait &nbsp;</div><div class="item" data-value="NS:KG">Kyrgyzstan &nbsp;</div><div class="item" data-value="SE:LA">Lao People's Democratic Republic &nbsp;</div><div class="item" data-value="EU:LV">Latvia &nbsp;</div><div class="item" data-value="ME:LB">Lebanon &nbsp;</div><div class="item" data-value="AF:LS">Lesotho &nbsp;</div><div class="item" data-value="AF:LR">Liberia &nbsp;</div><div class="item" data-value="AF:LY">Libyan Arab Jamahiriya &nbsp;</div><div class="item" data-value="EU:LT">Lithuania &nbsp;</div><div class="item" data-value="EU:LU">Luxembourg &nbsp;</div><div class="item" data-value="EU:MK">Macedonia, The Former Yugoslav Republic of &nbsp;</div><div class="item" data-value="AF:MG">Madagascar &nbsp;</div><div class="item" data-value="AF:MW">Malawi &nbsp;</div><div class="item" data-value="SE:MY">Malaysia &nbsp;</div><div class="item" data-value="AF:ML">Mali &nbsp;</div><div class="item" data-value="EU:MT">Malta &nbsp;</div><div class="item" data-value="CA:MQ">Martinique &nbsp;</div><div class="item" data-value="AF:MR">Mauritania &nbsp;</div><div class="item" data-value="AF:MU">Mauritius &nbsp;</div><div class="item" data-value="NA:MX">Mexico &nbsp;</div><div class="item" data-value="NS:MD">Moldova, Republic of &nbsp;</div><div class="item" data-value="EU:MC">Monaco &nbsp;</div><div class="item" data-value="ES:MN">Mongolia &nbsp;</div><div class="item" data-value="EU:ME">Montenegro &nbsp;</div><div class="item" data-value="AF:MA">Morocco &nbsp;</div><div class="item" data-value="AF:MZ">Mozambique &nbsp;</div><div class="item" data-value="SE:MM">Myanmar &nbsp;</div><div class="item" data-value="SS:NP">Nepal &nbsp;</div><div class="item" data-value="EU:NL">Netherlands &nbsp;</div><div class="item" data-value="EU:AN">Netherlands Antilles &nbsp;</div><div class="item" data-value="PA:NC">New Caledonia &nbsp;</div><div class="item" data-value="PA:NZ">New Zealand &nbsp;</div><div class="item" data-value="CA:NI">Nicaragua &nbsp;</div><div class="item" data-value="AF:NE">Niger &nbsp;</div><div class="item" data-value="AF:NG">Nigeria &nbsp;</div><div class="item" data-value="PA:MP">Northern Mariana Islands &nbsp;</div><div class="item" data-value="EU:NO">Norway &nbsp;</div><div class="item" data-value="ME:OM">Oman &nbsp;</div><div class="item" data-value="SS:PK">Pakistan &nbsp;</div><div class="item" data-value="CA:PA">Panama &nbsp;</div><div class="item" data-value="PA:PG">Papua New Guinea &nbsp;</div><div class="item" data-value="SA:PY">Paraguay &nbsp;</div><div class="item" data-value="SA:PE">Peru &nbsp;</div><div class="item" data-value="SE:PH">Philippines &nbsp;</div><div class="item" data-value="EU:PL">Poland &nbsp;</div><div class="item" data-value="EU:PT">Portugal &nbsp;</div><div class="item" data-value="CA:PR">Puerto Rico &nbsp;</div><div class="item" data-value="ME:QA">Qatar &nbsp;</div><div class="item" data-value="EU:RO">Romania &nbsp;</div><div class="item" data-value="NS:RU">Russian Federation &nbsp;</div><div class="item" data-value="AF:RW">Rwanda &nbsp;</div><div class="item" data-value="AF:RE">Réunion &nbsp;</div><div class="item" data-value="CA:KN">Saint Kitts and Nevis &nbsp;</div><div class="item" data-value="ME:SA">Saudi Arabia &nbsp;</div><div class="item" data-value="AF:SN">Senegal &nbsp;</div><div class="item" data-value="EU:RS">Serbia &nbsp;</div><div class="item" data-value="AF:SL">Sierra Leone &nbsp;</div><div class="item" data-value="SE:SG">Singapore &nbsp;</div><div class="item" data-value="EU:SK">Slovakia &nbsp;</div><div class="item" data-value="EU:SI">Slovenia &nbsp;</div><div class="item" data-value="PA:SB">Solomon Islands &nbsp;</div><div class="item" data-value="AF:ZA">South Africa &nbsp;</div><div class="item" data-value="EU:ES">Spain &nbsp;</div><div class="item" data-value="SS:LK">Sri Lanka &nbsp;</div><div class="item" data-value="AF:SD">Sudan &nbsp;</div><div class="item" data-value="AF:SZ">Swaziland &nbsp;</div><div class="item" data-value="EU:SE">Sweden &nbsp;</div><div class="item" data-value="EU:CH">Switzerland &nbsp;</div><div class="item" data-value="ME:SY">Syrian Arab Republic &nbsp;</div><div class="item" data-value="ES:TW">Taiwan &nbsp;</div><div class="item" data-value="AF:TZ">Tanzania &nbsp;</div><div class="item" data-value="SE:TH">Thailand &nbsp;</div><div class="item" data-value="AF:TG">Togo &nbsp;</div><div class="item" data-value="CA:TT">Trinidad and Tobago &nbsp;</div><div class="item" data-value="AF:TN">Tunisia &nbsp;</div><div class="item" data-value="ME:TR">Turkey &nbsp;</div><div class="item" data-value="AF:UG">Uganda &nbsp;</div><div class="item" data-value="NS:UA">Ukraine &nbsp;</div><div class="item" data-value="ME:AE">United Arab Emirates &nbsp;</div><div class="item" data-value="EU:GB">United Kingdom &nbsp;</div><div class="item" data-value="NA:US">United States &nbsp;</div><div class="item" data-value="SA:UY">Uruguay &nbsp;</div><div class="item" data-value="NS:UZ">Uzbekistan &nbsp;</div><div class="item" data-value="PA:VU">Vanuatu &nbsp;</div><div class="item" data-value="SA:VE">Venezuela &nbsp;</div><div class="item" data-value="SE:VN">Vietnam &nbsp;</div><div class="item" data-value="CA:VI">Virgin Islands (U.S.) &nbsp;</div><div class="item" data-value="ME:YE">Yemen &nbsp;</div><div class="item" data-value="AF:ZM">Zambia &nbsp;</div><div class="item" data-value="AF:ZW">Zimbabwe &nbsp;</div></div></div>
+        </div>
+
+        <div class="field">
+            <label>State 2</label>
+            <div class="ui fluid dropdown selection" tabindex="0"><select name="state2" id="State2">
+                <option value="" selected="selected">--- Optional --- &nbsp;</option>
+                <option value="NA:US:AL">United States, Alabama &nbsp;</option>
+                <option value="NA:US:AK">United States, Alaska &nbsp;</option>
+                <option value="NA:US:AZ">United States, Arizona &nbsp;</option>
+                <option value="NA:US:AR">United States, Arkansas &nbsp;</option>
+                <option value="NA:US:CA">United States, California &nbsp;</option>
+                <option value="NA:US:CO">United States, Colorado &nbsp;</option>
+                <option value="NA:US:CT">United States, Connecticut &nbsp;</option>
+                <option value="NA:US:DE">United States, Delaware &nbsp;</option>
+                <option value="NA:US:DC">United States, District of Columbia &nbsp;</option>
+                <option value="NA:US:FL">United States, Florida &nbsp;</option>
+                <option value="NA:US:GA">United States, Georgia &nbsp;</option>
+                <option value="NA:US:HI">United States, Hawaii &nbsp;</option>
+                <option value="NA:US:ID">United States, Idaho &nbsp;</option>
+                <option value="NA:US:IL">United States, Illinois &nbsp;</option>
+                <option value="NA:US:IN">United States, Indiana &nbsp;</option>
+                <option value="NA:US:IA">United States, Iowa &nbsp;</option>
+                <option value="NA:US:KS">United States, Kansas &nbsp;</option>
+                <option value="NA:US:KY">United States, Kentucky &nbsp;</option>
+                <option value="NA:US:LA">United States, Louisiana &nbsp;</option>
+                <option value="NA:US:ME">United States, Maine &nbsp;</option>
+                <option value="NA:US:MD">United States, Maryland &nbsp;</option>
+                <option value="NA:US:MA">United States, Massachusetts &nbsp;</option>
+                <option value="NA:US:MI">United States, Michigan &nbsp;</option>
+                <option value="NA:US:MN">United States, Minnesota &nbsp;</option>
+                <option value="NA:US:MS">United States, Mississippi &nbsp;</option>
+                <option value="NA:US:MO">United States, Missouri &nbsp;</option>
+                <option value="NA:US:MT">United States, Montana &nbsp;</option>
+                <option value="NA:US:NE">United States, Nebraska &nbsp;</option>
+                <option value="NA:US:NV">United States, Nevada &nbsp;</option>
+                <option value="NA:US:NH">United States, New Hampshire &nbsp;</option>
+                <option value="NA:US:NJ">United States, New Jersey &nbsp;</option>
+                <option value="NA:US:NM">United States, New Mexico &nbsp;</option>
+                <option value="NA:US:NY">United States, New York &nbsp;</option>
+                <option value="NA:US:NC">United States, North Carolina &nbsp;</option>
+                <option value="NA:US:ND">United States, North Dakota &nbsp;</option>
+                <option value="NA:US:OH">United States, Ohio &nbsp;</option>
+                <option value="NA:US:OK">United States, Oklahoma &nbsp;</option>
+                <option value="NA:US:OR">United States, Oregon &nbsp;</option>
+                <option value="NA:US:PA">United States, Pennsylvania &nbsp;</option>
+                <option value="NA:US:RI">United States, Rhode Island &nbsp;</option>
+                <option value="NA:US:SC">United States, South Carolina &nbsp;</option>
+                <option value="NA:US:SD">United States, South Dakota &nbsp;</option>
+                <option value="NA:US:TN">United States, Tennessee &nbsp;</option>
+                <option value="NA:US:TX">United States, Texas &nbsp;</option>
+                <option value="NA:US:UT">United States, Utah &nbsp;</option>
+                <option value="NA:US:VT">United States, Vermont &nbsp;</option>
+                <option value="NA:US:VA">United States, Virginia &nbsp;</option>
+                <option value="NA:US:WA">United States, Washington &nbsp;</option>
+                <option value="NA:US:WV">United States, West Virginia &nbsp;</option>
+                <option value="NA:US:WI">United States, Wisconsin &nbsp;</option>
+                <option value="NA:US:WY">United States, Wyoming &nbsp;</option>
+                <option value="NA:CA:AB">Canada, Alberta &nbsp;</option>
+                <option value="NA:CA:BC">Canada, British Columbia &nbsp;</option>
+                <option value="NA:CA:MB">Canada, Manitoba &nbsp;</option>
+                <option value="NA:CA:NB">Canada, New Brunswick &nbsp;</option>
+                <option value="NA:CA:NF">Canada, Newfoundland and Labrador &nbsp;</option>
+                <option value="NA:CA:NS">Canada, Nova Scotia &nbsp;</option>
+                <option value="NA:CA:ON">Canada, Ontario &nbsp;</option>
+                <option value="NA:CA:PE">Canada, Prince Edward Island &nbsp;</option>
+                <option value="NA:CA:QC">Canada, Quebec &nbsp;</option>
+                <option value="NA:CA:SK">Canada, Saskatchewan &nbsp;</option>
+                <option value="PA:AU:AC">Australia, Australian Capital Territory &nbsp;</option>
+                <option value="PA:AU:SW">Australia, New South Wales &nbsp;</option>
+                <option value="PA:AU:NT">Australia, Northern Territory &nbsp;</option>
+                <option value="PA:AU:QL">Australia, Queensland &nbsp;</option>
+                <option value="PA:AU:SA">Australia, South Australia &nbsp;</option>
+                <option value="PA:AU:TA">Australia, Tasmania &nbsp;</option>
+                <option value="PA:AU:VC">Australia, Victoria &nbsp;</option>
+                <option value="PA:AU:WA">Australia, Western Australia &nbsp;</option>
+            </select><i class="dropdown icon"></i><div class="default text">--- Optional --- &nbsp;</div><div class="menu" tabindex="-1"><div class="item" data-value="NA:US:AL">United States, Alabama &nbsp;</div><div class="item" data-value="NA:US:AK">United States, Alaska &nbsp;</div><div class="item" data-value="NA:US:AZ">United States, Arizona &nbsp;</div><div class="item" data-value="NA:US:AR">United States, Arkansas &nbsp;</div><div class="item" data-value="NA:US:CA">United States, California &nbsp;</div><div class="item" data-value="NA:US:CO">United States, Colorado &nbsp;</div><div class="item" data-value="NA:US:CT">United States, Connecticut &nbsp;</div><div class="item" data-value="NA:US:DE">United States, Delaware &nbsp;</div><div class="item" data-value="NA:US:DC">United States, District of Columbia &nbsp;</div><div class="item" data-value="NA:US:FL">United States, Florida &nbsp;</div><div class="item" data-value="NA:US:GA">United States, Georgia &nbsp;</div><div class="item" data-value="NA:US:HI">United States, Hawaii &nbsp;</div><div class="item" data-value="NA:US:ID">United States, Idaho &nbsp;</div><div class="item" data-value="NA:US:IL">United States, Illinois &nbsp;</div><div class="item" data-value="NA:US:IN">United States, Indiana &nbsp;</div><div class="item" data-value="NA:US:IA">United States, Iowa &nbsp;</div><div class="item" data-value="NA:US:KS">United States, Kansas &nbsp;</div><div class="item" data-value="NA:US:KY">United States, Kentucky &nbsp;</div><div class="item" data-value="NA:US:LA">United States, Louisiana &nbsp;</div><div class="item" data-value="NA:US:ME">United States, Maine &nbsp;</div><div class="item" data-value="NA:US:MD">United States, Maryland &nbsp;</div><div class="item" data-value="NA:US:MA">United States, Massachusetts &nbsp;</div><div class="item" data-value="NA:US:MI">United States, Michigan &nbsp;</div><div class="item" data-value="NA:US:MN">United States, Minnesota &nbsp;</div><div class="item" data-value="NA:US:MS">United States, Mississippi &nbsp;</div><div class="item" data-value="NA:US:MO">United States, Missouri &nbsp;</div><div class="item" data-value="NA:US:MT">United States, Montana &nbsp;</div><div class="item" data-value="NA:US:NE">United States, Nebraska &nbsp;</div><div class="item" data-value="NA:US:NV">United States, Nevada &nbsp;</div><div class="item" data-value="NA:US:NH">United States, New Hampshire &nbsp;</div><div class="item" data-value="NA:US:NJ">United States, New Jersey &nbsp;</div><div class="item" data-value="NA:US:NM">United States, New Mexico &nbsp;</div><div class="item" data-value="NA:US:NY">United States, New York &nbsp;</div><div class="item" data-value="NA:US:NC">United States, North Carolina &nbsp;</div><div class="item" data-value="NA:US:ND">United States, North Dakota &nbsp;</div><div class="item" data-value="NA:US:OH">United States, Ohio &nbsp;</div><div class="item" data-value="NA:US:OK">United States, Oklahoma &nbsp;</div><div class="item" data-value="NA:US:OR">United States, Oregon &nbsp;</div><div class="item" data-value="NA:US:PA">United States, Pennsylvania &nbsp;</div><div class="item" data-value="NA:US:RI">United States, Rhode Island &nbsp;</div><div class="item" data-value="NA:US:SC">United States, South Carolina &nbsp;</div><div class="item" data-value="NA:US:SD">United States, South Dakota &nbsp;</div><div class="item" data-value="NA:US:TN">United States, Tennessee &nbsp;</div><div class="item" data-value="NA:US:TX">United States, Texas &nbsp;</div><div class="item" data-value="NA:US:UT">United States, Utah &nbsp;</div><div class="item" data-value="NA:US:VT">United States, Vermont &nbsp;</div><div class="item" data-value="NA:US:VA">United States, Virginia &nbsp;</div><div class="item" data-value="NA:US:WA">United States, Washington &nbsp;</div><div class="item" data-value="NA:US:WV">United States, West Virginia &nbsp;</div><div class="item" data-value="NA:US:WI">United States, Wisconsin &nbsp;</div><div class="item" data-value="NA:US:WY">United States, Wyoming &nbsp;</div><div class="item" data-value="NA:CA:AB">Canada, Alberta &nbsp;</div><div class="item" data-value="NA:CA:BC">Canada, British Columbia &nbsp;</div><div class="item" data-value="NA:CA:MB">Canada, Manitoba &nbsp;</div><div class="item" data-value="NA:CA:NB">Canada, New Brunswick &nbsp;</div><div class="item" data-value="NA:CA:NF">Canada, Newfoundland and Labrador &nbsp;</div><div class="item" data-value="NA:CA:NS">Canada, Nova Scotia &nbsp;</div><div class="item" data-value="NA:CA:ON">Canada, Ontario &nbsp;</div><div class="item" data-value="NA:CA:PE">Canada, Prince Edward Island &nbsp;</div><div class="item" data-value="NA:CA:QC">Canada, Quebec &nbsp;</div><div class="item" data-value="NA:CA:SK">Canada, Saskatchewan &nbsp;</div><div class="item" data-value="PA:AU:AC">Australia, Australian Capital Territory &nbsp;</div><div class="item" data-value="PA:AU:SW">Australia, New South Wales &nbsp;</div><div class="item" data-value="PA:AU:NT">Australia, Northern Territory &nbsp;</div><div class="item" data-value="PA:AU:QL">Australia, Queensland &nbsp;</div><div class="item" data-value="PA:AU:SA">Australia, South Australia &nbsp;</div><div class="item" data-value="PA:AU:TA">Australia, Tasmania &nbsp;</div><div class="item" data-value="PA:AU:VC">Australia, Victoria &nbsp;</div><div class="item" data-value="PA:AU:WA">Australia, Western Australia &nbsp;</div></div></div>
+        </div>
+        <div class="field">
+            <label>Country 2</label>
+            <div class="ui fluid dropdown selection" tabindex="0"><select name="country2" id="Country2">
+                <option value="" selected="selected">--- Optional --- &nbsp;</option>
+                <option value="NA:US">United States &nbsp;</option>
+                <option value="SS:AF">Afghanistan &nbsp;</option>
+                <option value="EU:AL">Albania &nbsp;</option>
+                <option value="AF:DZ">Algeria &nbsp;</option>
+                <option value="PA:AS">American Samoa &nbsp;</option>
+                <option value="EU:AD">Andorra &nbsp;</option>
+                <option value="AF:AO">Angola &nbsp;</option>
+                <option value="SA:AR">Argentina &nbsp;</option>
+                <option value="NS:AM">Armenia &nbsp;</option>
+                <option value="PA:AU">Australia &nbsp;</option>
+                <option value="EU:AT">Austria &nbsp;</option>
+                <option value="NS:AZ">Azerbaijan &nbsp;</option>
+                <option value="CA:BS">Bahamas &nbsp;</option>
+                <option value="ME:BH">Bahrain &nbsp;</option>
+                <option value="SS:BD">Bangladesh &nbsp;</option>
+                <option value="CA:BB">Barbados &nbsp;</option>
+                <option value="NS:BY">Belarus &nbsp;</option>
+                <option value="EU:BE">Belgium &nbsp;</option>
+                <option value="CA:BZ">Belize &nbsp;</option>
+                <option value="AF:BJ">Benin &nbsp;</option>
+                <option value="CA:BM">Bermuda &nbsp;</option>
+                <option value="SS:BT">Bhutan &nbsp;</option>
+                <option value="SA:BO">Bolivia &nbsp;</option>
+                <option value="EU:BA">Bosnia and Herzegovina &nbsp;</option>
+                <option value="AF:BW">Botswana &nbsp;</option>
+                <option value="SA:BR">Brazil &nbsp;</option>
+                <option value="SE:BN">Brunei Darussalam &nbsp;</option>
+                <option value="EU:BG">Bulgaria &nbsp;</option>
+                <option value="AF:BF">Burkina Faso &nbsp;</option>
+                <option value="AF:BI">Burundi &nbsp;</option>
+                <option value="SE:KH">Cambodia &nbsp;</option>
+                <option value="AF:CM">Cameroon &nbsp;</option>
+                <option value="NA:CA">Canada &nbsp;</option>
+                <option value="AF:CF">Central African Republic &nbsp;</option>
+                <option value="AF:TD">Chad &nbsp;</option>
+                <option value="SA:CL">Chile &nbsp;</option>
+                <option value="ES:CN">China &nbsp;</option>
+                <option value="SA:CO">Colombia &nbsp;</option>
+                <option value="AF:CG">Congo &nbsp;</option>
+                <option value="AF:CD">Congo, The Democratic Republic of the &nbsp;</option>
+                <option value="CA:CR">Costa Rica &nbsp;</option>
+                <option value="EU:HR">Croatia &nbsp;</option>
+                <option value="CA:CU">Cuba &nbsp;</option>
+                <option value="ME:CY">Cyprus &nbsp;</option>
+                <option value="EU:CZ">Czech Republic &nbsp;</option>
+                <option value="AF:CI">Côte D'Ivoire &nbsp;</option>
+                <option value="EU:DK">Denmark &nbsp;</option>
+                <option value="AF:DJ">Djibouti &nbsp;</option>
+                <option value="CA:DO">Dominican Republic &nbsp;</option>
+                <option value="SA:EC">Ecuador &nbsp;</option>
+                <option value="AF:EG">Egypt &nbsp;</option>
+                <option value="CA:SV">El Salvador &nbsp;</option>
+                <option value="AF:GQ">Equatorial Guinea &nbsp;</option>
+                <option value="EU:EE">Estonia &nbsp;</option>
+                <option value="AF:ET">Ethiopia &nbsp;</option>
+                <option value="PA:FJ">Fiji &nbsp;</option>
+                <option value="EU:FI">Finland &nbsp;</option>
+                <option value="EU:CS">Former Serbia and Montenegro &nbsp;</option>
+                <option value="EU:YU">Former Yugoslavia &nbsp;</option>
+                <option value="EU:FR">France &nbsp;</option>
+                <option value="PA:PF">French Polynesia &nbsp;</option>
+                <option value="AF:GA">Gabon &nbsp;</option>
+                <option value="AF:GM">Gambia &nbsp;</option>
+                <option value="NS:GE">Georgia &nbsp;</option>
+                <option value="EU:DE">Germany &nbsp;</option>
+                <option value="AF:GH">Ghana &nbsp;</option>
+                <option value="EU:GR">Greece &nbsp;</option>
+                <option value="CA:GD">Grenada &nbsp;</option>
+                <option value="CA:GP">Guadeloupe &nbsp;</option>
+                <option value="CA:GT">Guatemala &nbsp;</option>
+                <option value="AF:GN">Guinea &nbsp;</option>
+                <option value="AF:GW">Guinea-Bissau &nbsp;</option>
+                <option value="SA:GY">Guyana &nbsp;</option>
+                <option value="CA:HT">Haiti &nbsp;</option>
+                <option value="EU:VA">Holy See (Vatican City State) &nbsp;</option>
+                <option value="CA:HN">Honduras &nbsp;</option>
+                <option value="ES:HK">Hong Kong &nbsp;</option>
+                <option value="EU:HU">Hungary &nbsp;</option>
+                <option value="EU:IS">Iceland &nbsp;</option>
+                <option value="SS:IN">India &nbsp;</option>
+                <option value="SE:ID">Indonesia &nbsp;</option>
+                <option value="ME:IR">Iran, Islamic Republic of &nbsp;</option>
+                <option value="ME:IQ">Iraq &nbsp;</option>
+                <option value="EU:IE">Ireland &nbsp;</option>
+                <option value="ME:IL">Israel &nbsp;</option>
+                <option value="EU:IT">Italy &nbsp;</option>
+                <option value="CA:JM">Jamaica &nbsp;</option>
+                <option value="ES:JP">Japan &nbsp;</option>
+                <option value="ME:JO">Jordan &nbsp;</option>
+                <option value="NS:KZ">Kazakhstan &nbsp;</option>
+                <option value="AF:KE">Kenya &nbsp;</option>
+                <option value="ES:KP">Korea, Democratic People's Republic of &nbsp;</option>
+                <option value="ES:KR">Korea, Republic of &nbsp;</option>
+                <option value="ME:KW">Kuwait &nbsp;</option>
+                <option value="NS:KG">Kyrgyzstan &nbsp;</option>
+                <option value="SE:LA">Lao People's Democratic Republic &nbsp;</option>
+                <option value="EU:LV">Latvia &nbsp;</option>
+                <option value="ME:LB">Lebanon &nbsp;</option>
+                <option value="AF:LS">Lesotho &nbsp;</option>
+                <option value="AF:LR">Liberia &nbsp;</option>
+                <option value="AF:LY">Libyan Arab Jamahiriya &nbsp;</option>
+                <option value="EU:LT">Lithuania &nbsp;</option>
+                <option value="EU:LU">Luxembourg &nbsp;</option>
+                <option value="EU:MK">Macedonia, The Former Yugoslav Republic of &nbsp;</option>
+                <option value="AF:MG">Madagascar &nbsp;</option>
+                <option value="AF:MW">Malawi &nbsp;</option>
+                <option value="SE:MY">Malaysia &nbsp;</option>
+                <option value="AF:ML">Mali &nbsp;</option>
+                <option value="EU:MT">Malta &nbsp;</option>
+                <option value="CA:MQ">Martinique &nbsp;</option>
+                <option value="AF:MR">Mauritania &nbsp;</option>
+                <option value="AF:MU">Mauritius &nbsp;</option>
+                <option value="NA:MX">Mexico &nbsp;</option>
+                <option value="NS:MD">Moldova, Republic of &nbsp;</option>
+                <option value="EU:MC">Monaco &nbsp;</option>
+                <option value="ES:MN">Mongolia &nbsp;</option>
+                <option value="EU:ME">Montenegro &nbsp;</option>
+                <option value="AF:MA">Morocco &nbsp;</option>
+                <option value="AF:MZ">Mozambique &nbsp;</option>
+                <option value="SE:MM">Myanmar &nbsp;</option>
+                <option value="SS:NP">Nepal &nbsp;</option>
+                <option value="EU:NL">Netherlands &nbsp;</option>
+                <option value="EU:AN">Netherlands Antilles &nbsp;</option>
+                <option value="PA:NC">New Caledonia &nbsp;</option>
+                <option value="PA:NZ">New Zealand &nbsp;</option>
+                <option value="CA:NI">Nicaragua &nbsp;</option>
+                <option value="AF:NE">Niger &nbsp;</option>
+                <option value="AF:NG">Nigeria &nbsp;</option>
+                <option value="PA:MP">Northern Mariana Islands &nbsp;</option>
+                <option value="EU:NO">Norway &nbsp;</option>
+                <option value="ME:OM">Oman &nbsp;</option>
+                <option value="SS:PK">Pakistan &nbsp;</option>
+                <option value="CA:PA">Panama &nbsp;</option>
+                <option value="PA:PG">Papua New Guinea &nbsp;</option>
+                <option value="SA:PY">Paraguay &nbsp;</option>
+                <option value="SA:PE">Peru &nbsp;</option>
+                <option value="SE:PH">Philippines &nbsp;</option>
+                <option value="EU:PL">Poland &nbsp;</option>
+                <option value="EU:PT">Portugal &nbsp;</option>
+                <option value="CA:PR">Puerto Rico &nbsp;</option>
+                <option value="ME:QA">Qatar &nbsp;</option>
+                <option value="EU:RO">Romania &nbsp;</option>
+                <option value="NS:RU">Russian Federation &nbsp;</option>
+                <option value="AF:RW">Rwanda &nbsp;</option>
+                <option value="AF:RE">Réunion &nbsp;</option>
+                <option value="CA:KN">Saint Kitts and Nevis &nbsp;</option>
+                <option value="ME:SA">Saudi Arabia &nbsp;</option>
+                <option value="AF:SN">Senegal &nbsp;</option>
+                <option value="EU:RS">Serbia &nbsp;</option>
+                <option value="AF:SL">Sierra Leone &nbsp;</option>
+                <option value="SE:SG">Singapore &nbsp;</option>
+                <option value="EU:SK">Slovakia &nbsp;</option>
+                <option value="EU:SI">Slovenia &nbsp;</option>
+                <option value="PA:SB">Solomon Islands &nbsp;</option>
+                <option value="AF:ZA">South Africa &nbsp;</option>
+                <option value="EU:ES">Spain &nbsp;</option>
+                <option value="SS:LK">Sri Lanka &nbsp;</option>
+                <option value="AF:SD">Sudan &nbsp;</option>
+                <option value="AF:SZ">Swaziland &nbsp;</option>
+                <option value="EU:SE">Sweden &nbsp;</option>
+                <option value="EU:CH">Switzerland &nbsp;</option>
+                <option value="ME:SY">Syrian Arab Republic &nbsp;</option>
+                <option value="ES:TW">Taiwan &nbsp;</option>
+                <option value="AF:TZ">Tanzania &nbsp;</option>
+                <option value="SE:TH">Thailand &nbsp;</option>
+                <option value="AF:TG">Togo &nbsp;</option>
+                <option value="CA:TT">Trinidad and Tobago &nbsp;</option>
+                <option value="AF:TN">Tunisia &nbsp;</option>
+                <option value="ME:TR">Turkey &nbsp;</option>
+                <option value="AF:UG">Uganda &nbsp;</option>
+                <option value="NS:UA">Ukraine &nbsp;</option>
+                <option value="ME:AE">United Arab Emirates &nbsp;</option>
+                <option value="EU:GB">United Kingdom &nbsp;</option>
+                <option value="NA:US">United States &nbsp;</option>
+                <option value="SA:UY">Uruguay &nbsp;</option>
+                <option value="NS:UZ">Uzbekistan &nbsp;</option>
+                <option value="PA:VU">Vanuatu &nbsp;</option>
+                <option value="SA:VE">Venezuela &nbsp;</option>
+                <option value="SE:VN">Vietnam &nbsp;</option>
+                <option value="CA:VI">Virgin Islands (U.S.) &nbsp;</option>
+                <option value="ME:YE">Yemen &nbsp;</option>
+                <option value="AF:ZM">Zambia &nbsp;</option>
+                <option value="AF:ZW">Zimbabwe &nbsp;</option>
+            </select><i class="dropdown icon"></i><div class="default text">--- Optional --- &nbsp;</div><div class="menu" tabindex="-1"><div class="item" data-value="NA:US">United States &nbsp;</div><div class="item" data-value="SS:AF">Afghanistan &nbsp;</div><div class="item" data-value="EU:AL">Albania &nbsp;</div><div class="item" data-value="AF:DZ">Algeria &nbsp;</div><div class="item" data-value="PA:AS">American Samoa &nbsp;</div><div class="item" data-value="EU:AD">Andorra &nbsp;</div><div class="item" data-value="AF:AO">Angola &nbsp;</div><div class="item" data-value="SA:AR">Argentina &nbsp;</div><div class="item" data-value="NS:AM">Armenia &nbsp;</div><div class="item" data-value="PA:AU">Australia &nbsp;</div><div class="item" data-value="EU:AT">Austria &nbsp;</div><div class="item" data-value="NS:AZ">Azerbaijan &nbsp;</div><div class="item" data-value="CA:BS">Bahamas &nbsp;</div><div class="item" data-value="ME:BH">Bahrain &nbsp;</div><div class="item" data-value="SS:BD">Bangladesh &nbsp;</div><div class="item" data-value="CA:BB">Barbados &nbsp;</div><div class="item" data-value="NS:BY">Belarus &nbsp;</div><div class="item" data-value="EU:BE">Belgium &nbsp;</div><div class="item" data-value="CA:BZ">Belize &nbsp;</div><div class="item" data-value="AF:BJ">Benin &nbsp;</div><div class="item" data-value="CA:BM">Bermuda &nbsp;</div><div class="item" data-value="SS:BT">Bhutan &nbsp;</div><div class="item" data-value="SA:BO">Bolivia &nbsp;</div><div class="item" data-value="EU:BA">Bosnia and Herzegovina &nbsp;</div><div class="item" data-value="AF:BW">Botswana &nbsp;</div><div class="item" data-value="SA:BR">Brazil &nbsp;</div><div class="item" data-value="SE:BN">Brunei Darussalam &nbsp;</div><div class="item" data-value="EU:BG">Bulgaria &nbsp;</div><div class="item" data-value="AF:BF">Burkina Faso &nbsp;</div><div class="item" data-value="AF:BI">Burundi &nbsp;</div><div class="item" data-value="SE:KH">Cambodia &nbsp;</div><div class="item" data-value="AF:CM">Cameroon &nbsp;</div><div class="item" data-value="NA:CA">Canada &nbsp;</div><div class="item" data-value="AF:CF">Central African Republic &nbsp;</div><div class="item" data-value="AF:TD">Chad &nbsp;</div><div class="item" data-value="SA:CL">Chile &nbsp;</div><div class="item" data-value="ES:CN">China &nbsp;</div><div class="item" data-value="SA:CO">Colombia &nbsp;</div><div class="item" data-value="AF:CG">Congo &nbsp;</div><div class="item" data-value="AF:CD">Congo, The Democratic Republic of the &nbsp;</div><div class="item" data-value="CA:CR">Costa Rica &nbsp;</div><div class="item" data-value="EU:HR">Croatia &nbsp;</div><div class="item" data-value="CA:CU">Cuba &nbsp;</div><div class="item" data-value="ME:CY">Cyprus &nbsp;</div><div class="item" data-value="EU:CZ">Czech Republic &nbsp;</div><div class="item" data-value="AF:CI">Côte D'Ivoire &nbsp;</div><div class="item" data-value="EU:DK">Denmark &nbsp;</div><div class="item" data-value="AF:DJ">Djibouti &nbsp;</div><div class="item" data-value="CA:DO">Dominican Republic &nbsp;</div><div class="item" data-value="SA:EC">Ecuador &nbsp;</div><div class="item" data-value="AF:EG">Egypt &nbsp;</div><div class="item" data-value="CA:SV">El Salvador &nbsp;</div><div class="item" data-value="AF:GQ">Equatorial Guinea &nbsp;</div><div class="item" data-value="EU:EE">Estonia &nbsp;</div><div class="item" data-value="AF:ET">Ethiopia &nbsp;</div><div class="item" data-value="PA:FJ">Fiji &nbsp;</div><div class="item" data-value="EU:FI">Finland &nbsp;</div><div class="item" data-value="EU:CS">Former Serbia and Montenegro &nbsp;</div><div class="item" data-value="EU:YU">Former Yugoslavia &nbsp;</div><div class="item" data-value="EU:FR">France &nbsp;</div><div class="item" data-value="PA:PF">French Polynesia &nbsp;</div><div class="item" data-value="AF:GA">Gabon &nbsp;</div><div class="item" data-value="AF:GM">Gambia &nbsp;</div><div class="item" data-value="NS:GE">Georgia &nbsp;</div><div class="item" data-value="EU:DE">Germany &nbsp;</div><div class="item" data-value="AF:GH">Ghana &nbsp;</div><div class="item" data-value="EU:GR">Greece &nbsp;</div><div class="item" data-value="CA:GD">Grenada &nbsp;</div><div class="item" data-value="CA:GP">Guadeloupe &nbsp;</div><div class="item" data-value="CA:GT">Guatemala &nbsp;</div><div class="item" data-value="AF:GN">Guinea &nbsp;</div><div class="item" data-value="AF:GW">Guinea-Bissau &nbsp;</div><div class="item" data-value="SA:GY">Guyana &nbsp;</div><div class="item" data-value="CA:HT">Haiti &nbsp;</div><div class="item" data-value="EU:VA">Holy See (Vatican City State) &nbsp;</div><div class="item" data-value="CA:HN">Honduras &nbsp;</div><div class="item" data-value="ES:HK">Hong Kong &nbsp;</div><div class="item" data-value="EU:HU">Hungary &nbsp;</div><div class="item" data-value="EU:IS">Iceland &nbsp;</div><div class="item" data-value="SS:IN">India &nbsp;</div><div class="item" data-value="SE:ID">Indonesia &nbsp;</div><div class="item" data-value="ME:IR">Iran, Islamic Republic of &nbsp;</div><div class="item" data-value="ME:IQ">Iraq &nbsp;</div><div class="item" data-value="EU:IE">Ireland &nbsp;</div><div class="item" data-value="ME:IL">Israel &nbsp;</div><div class="item" data-value="EU:IT">Italy &nbsp;</div><div class="item" data-value="CA:JM">Jamaica &nbsp;</div><div class="item" data-value="ES:JP">Japan &nbsp;</div><div class="item" data-value="ME:JO">Jordan &nbsp;</div><div class="item" data-value="NS:KZ">Kazakhstan &nbsp;</div><div class="item" data-value="AF:KE">Kenya &nbsp;</div><div class="item" data-value="ES:KP">Korea, Democratic People's Republic of &nbsp;</div><div class="item" data-value="ES:KR">Korea, Republic of &nbsp;</div><div class="item" data-value="ME:KW">Kuwait &nbsp;</div><div class="item" data-value="NS:KG">Kyrgyzstan &nbsp;</div><div class="item" data-value="SE:LA">Lao People's Democratic Republic &nbsp;</div><div class="item" data-value="EU:LV">Latvia &nbsp;</div><div class="item" data-value="ME:LB">Lebanon &nbsp;</div><div class="item" data-value="AF:LS">Lesotho &nbsp;</div><div class="item" data-value="AF:LR">Liberia &nbsp;</div><div class="item" data-value="AF:LY">Libyan Arab Jamahiriya &nbsp;</div><div class="item" data-value="EU:LT">Lithuania &nbsp;</div><div class="item" data-value="EU:LU">Luxembourg &nbsp;</div><div class="item" data-value="EU:MK">Macedonia, The Former Yugoslav Republic of &nbsp;</div><div class="item" data-value="AF:MG">Madagascar &nbsp;</div><div class="item" data-value="AF:MW">Malawi &nbsp;</div><div class="item" data-value="SE:MY">Malaysia &nbsp;</div><div class="item" data-value="AF:ML">Mali &nbsp;</div><div class="item" data-value="EU:MT">Malta &nbsp;</div><div class="item" data-value="CA:MQ">Martinique &nbsp;</div><div class="item" data-value="AF:MR">Mauritania &nbsp;</div><div class="item" data-value="AF:MU">Mauritius &nbsp;</div><div class="item" data-value="NA:MX">Mexico &nbsp;</div><div class="item" data-value="NS:MD">Moldova, Republic of &nbsp;</div><div class="item" data-value="EU:MC">Monaco &nbsp;</div><div class="item" data-value="ES:MN">Mongolia &nbsp;</div><div class="item" data-value="EU:ME">Montenegro &nbsp;</div><div class="item" data-value="AF:MA">Morocco &nbsp;</div><div class="item" data-value="AF:MZ">Mozambique &nbsp;</div><div class="item" data-value="SE:MM">Myanmar &nbsp;</div><div class="item" data-value="SS:NP">Nepal &nbsp;</div><div class="item" data-value="EU:NL">Netherlands &nbsp;</div><div class="item" data-value="EU:AN">Netherlands Antilles &nbsp;</div><div class="item" data-value="PA:NC">New Caledonia &nbsp;</div><div class="item" data-value="PA:NZ">New Zealand &nbsp;</div><div class="item" data-value="CA:NI">Nicaragua &nbsp;</div><div class="item" data-value="AF:NE">Niger &nbsp;</div><div class="item" data-value="AF:NG">Nigeria &nbsp;</div><div class="item" data-value="PA:MP">Northern Mariana Islands &nbsp;</div><div class="item" data-value="EU:NO">Norway &nbsp;</div><div class="item" data-value="ME:OM">Oman &nbsp;</div><div class="item" data-value="SS:PK">Pakistan &nbsp;</div><div class="item" data-value="CA:PA">Panama &nbsp;</div><div class="item" data-value="PA:PG">Papua New Guinea &nbsp;</div><div class="item" data-value="SA:PY">Paraguay &nbsp;</div><div class="item" data-value="SA:PE">Peru &nbsp;</div><div class="item" data-value="SE:PH">Philippines &nbsp;</div><div class="item" data-value="EU:PL">Poland &nbsp;</div><div class="item" data-value="EU:PT">Portugal &nbsp;</div><div class="item" data-value="CA:PR">Puerto Rico &nbsp;</div><div class="item" data-value="ME:QA">Qatar &nbsp;</div><div class="item" data-value="EU:RO">Romania &nbsp;</div><div class="item" data-value="NS:RU">Russian Federation &nbsp;</div><div class="item" data-value="AF:RW">Rwanda &nbsp;</div><div class="item" data-value="AF:RE">Réunion &nbsp;</div><div class="item" data-value="CA:KN">Saint Kitts and Nevis &nbsp;</div><div class="item" data-value="ME:SA">Saudi Arabia &nbsp;</div><div class="item" data-value="AF:SN">Senegal &nbsp;</div><div class="item" data-value="EU:RS">Serbia &nbsp;</div><div class="item" data-value="AF:SL">Sierra Leone &nbsp;</div><div class="item" data-value="SE:SG">Singapore &nbsp;</div><div class="item" data-value="EU:SK">Slovakia &nbsp;</div><div class="item" data-value="EU:SI">Slovenia &nbsp;</div><div class="item" data-value="PA:SB">Solomon Islands &nbsp;</div><div class="item" data-value="AF:ZA">South Africa &nbsp;</div><div class="item" data-value="EU:ES">Spain &nbsp;</div><div class="item" data-value="SS:LK">Sri Lanka &nbsp;</div><div class="item" data-value="AF:SD">Sudan &nbsp;</div><div class="item" data-value="AF:SZ">Swaziland &nbsp;</div><div class="item" data-value="EU:SE">Sweden &nbsp;</div><div class="item" data-value="EU:CH">Switzerland &nbsp;</div><div class="item" data-value="ME:SY">Syrian Arab Republic &nbsp;</div><div class="item" data-value="ES:TW">Taiwan &nbsp;</div><div class="item" data-value="AF:TZ">Tanzania &nbsp;</div><div class="item" data-value="SE:TH">Thailand &nbsp;</div><div class="item" data-value="AF:TG">Togo &nbsp;</div><div class="item" data-value="CA:TT">Trinidad and Tobago &nbsp;</div><div class="item" data-value="AF:TN">Tunisia &nbsp;</div><div class="item" data-value="ME:TR">Turkey &nbsp;</div><div class="item" data-value="AF:UG">Uganda &nbsp;</div><div class="item" data-value="NS:UA">Ukraine &nbsp;</div><div class="item" data-value="ME:AE">United Arab Emirates &nbsp;</div><div class="item" data-value="EU:GB">United Kingdom &nbsp;</div><div class="item" data-value="NA:US">United States &nbsp;</div><div class="item" data-value="SA:UY">Uruguay &nbsp;</div><div class="item" data-value="NS:UZ">Uzbekistan &nbsp;</div><div class="item" data-value="PA:VU">Vanuatu &nbsp;</div><div class="item" data-value="SA:VE">Venezuela &nbsp;</div><div class="item" data-value="SE:VN">Vietnam &nbsp;</div><div class="item" data-value="CA:VI">Virgin Islands (U.S.) &nbsp;</div><div class="item" data-value="ME:YE">Yemen &nbsp;</div><div class="item" data-value="AF:ZM">Zambia &nbsp;</div><div class="item" data-value="AF:ZW">Zimbabwe &nbsp;</div></div></div>
+        </div>
+
+        <div class="field">
+            <label>State 3</label>
+            <div class="ui fluid dropdown selection" tabindex="0"><select name="state3" id="State3">
+                <option value="" selected="selected">--- Optional --- &nbsp;</option>
+                <option value="NA:US:AL">United States, Alabama &nbsp;</option>
+                <option value="NA:US:AK">United States, Alaska &nbsp;</option>
+                <option value="NA:US:AZ">United States, Arizona &nbsp;</option>
+                <option value="NA:US:AR">United States, Arkansas &nbsp;</option>
+                <option value="NA:US:CA">United States, California &nbsp;</option>
+                <option value="NA:US:CO">United States, Colorado &nbsp;</option>
+                <option value="NA:US:CT">United States, Connecticut &nbsp;</option>
+                <option value="NA:US:DE">United States, Delaware &nbsp;</option>
+                <option value="NA:US:DC">United States, District of Columbia &nbsp;</option>
+                <option value="NA:US:FL">United States, Florida &nbsp;</option>
+                <option value="NA:US:GA">United States, Georgia &nbsp;</option>
+                <option value="NA:US:HI">United States, Hawaii &nbsp;</option>
+                <option value="NA:US:ID">United States, Idaho &nbsp;</option>
+                <option value="NA:US:IL">United States, Illinois &nbsp;</option>
+                <option value="NA:US:IN">United States, Indiana &nbsp;</option>
+                <option value="NA:US:IA">United States, Iowa &nbsp;</option>
+                <option value="NA:US:KS">United States, Kansas &nbsp;</option>
+                <option value="NA:US:KY">United States, Kentucky &nbsp;</option>
+                <option value="NA:US:LA">United States, Louisiana &nbsp;</option>
+                <option value="NA:US:ME">United States, Maine &nbsp;</option>
+                <option value="NA:US:MD">United States, Maryland &nbsp;</option>
+                <option value="NA:US:MA">United States, Massachusetts &nbsp;</option>
+                <option value="NA:US:MI">United States, Michigan &nbsp;</option>
+                <option value="NA:US:MN">United States, Minnesota &nbsp;</option>
+                <option value="NA:US:MS">United States, Mississippi &nbsp;</option>
+                <option value="NA:US:MO">United States, Missouri &nbsp;</option>
+                <option value="NA:US:MT">United States, Montana &nbsp;</option>
+                <option value="NA:US:NE">United States, Nebraska &nbsp;</option>
+                <option value="NA:US:NV">United States, Nevada &nbsp;</option>
+                <option value="NA:US:NH">United States, New Hampshire &nbsp;</option>
+                <option value="NA:US:NJ">United States, New Jersey &nbsp;</option>
+                <option value="NA:US:NM">United States, New Mexico &nbsp;</option>
+                <option value="NA:US:NY">United States, New York &nbsp;</option>
+                <option value="NA:US:NC">United States, North Carolina &nbsp;</option>
+                <option value="NA:US:ND">United States, North Dakota &nbsp;</option>
+                <option value="NA:US:OH">United States, Ohio &nbsp;</option>
+                <option value="NA:US:OK">United States, Oklahoma &nbsp;</option>
+                <option value="NA:US:OR">United States, Oregon &nbsp;</option>
+                <option value="NA:US:PA">United States, Pennsylvania &nbsp;</option>
+                <option value="NA:US:RI">United States, Rhode Island &nbsp;</option>
+                <option value="NA:US:SC">United States, South Carolina &nbsp;</option>
+                <option value="NA:US:SD">United States, South Dakota &nbsp;</option>
+                <option value="NA:US:TN">United States, Tennessee &nbsp;</option>
+                <option value="NA:US:TX">United States, Texas &nbsp;</option>
+                <option value="NA:US:UT">United States, Utah &nbsp;</option>
+                <option value="NA:US:VT">United States, Vermont &nbsp;</option>
+                <option value="NA:US:VA">United States, Virginia &nbsp;</option>
+                <option value="NA:US:WA">United States, Washington &nbsp;</option>
+                <option value="NA:US:WV">United States, West Virginia &nbsp;</option>
+                <option value="NA:US:WI">United States, Wisconsin &nbsp;</option>
+                <option value="NA:US:WY">United States, Wyoming &nbsp;</option>
+                <option value="NA:CA:AB">Canada, Alberta &nbsp;</option>
+                <option value="NA:CA:BC">Canada, British Columbia &nbsp;</option>
+                <option value="NA:CA:MB">Canada, Manitoba &nbsp;</option>
+                <option value="NA:CA:NB">Canada, New Brunswick &nbsp;</option>
+                <option value="NA:CA:NF">Canada, Newfoundland and Labrador &nbsp;</option>
+                <option value="NA:CA:NS">Canada, Nova Scotia &nbsp;</option>
+                <option value="NA:CA:ON">Canada, Ontario &nbsp;</option>
+                <option value="NA:CA:PE">Canada, Prince Edward Island &nbsp;</option>
+                <option value="NA:CA:QC">Canada, Quebec &nbsp;</option>
+                <option value="NA:CA:SK">Canada, Saskatchewan &nbsp;</option>
+                <option value="PA:AU:AC">Australia, Australian Capital Territory &nbsp;</option>
+                <option value="PA:AU:SW">Australia, New South Wales &nbsp;</option>
+                <option value="PA:AU:NT">Australia, Northern Territory &nbsp;</option>
+                <option value="PA:AU:QL">Australia, Queensland &nbsp;</option>
+                <option value="PA:AU:SA">Australia, South Australia &nbsp;</option>
+                <option value="PA:AU:TA">Australia, Tasmania &nbsp;</option>
+                <option value="PA:AU:VC">Australia, Victoria &nbsp;</option>
+                <option value="PA:AU:WA">Australia, Western Australia &nbsp;</option>
+            </select><i class="dropdown icon"></i><div class="default text">--- Optional --- &nbsp;</div><div class="menu" tabindex="-1"><div class="item" data-value="NA:US:AL">United States, Alabama &nbsp;</div><div class="item" data-value="NA:US:AK">United States, Alaska &nbsp;</div><div class="item" data-value="NA:US:AZ">United States, Arizona &nbsp;</div><div class="item" data-value="NA:US:AR">United States, Arkansas &nbsp;</div><div class="item" data-value="NA:US:CA">United States, California &nbsp;</div><div class="item" data-value="NA:US:CO">United States, Colorado &nbsp;</div><div class="item" data-value="NA:US:CT">United States, Connecticut &nbsp;</div><div class="item" data-value="NA:US:DE">United States, Delaware &nbsp;</div><div class="item" data-value="NA:US:DC">United States, District of Columbia &nbsp;</div><div class="item" data-value="NA:US:FL">United States, Florida &nbsp;</div><div class="item" data-value="NA:US:GA">United States, Georgia &nbsp;</div><div class="item" data-value="NA:US:HI">United States, Hawaii &nbsp;</div><div class="item" data-value="NA:US:ID">United States, Idaho &nbsp;</div><div class="item" data-value="NA:US:IL">United States, Illinois &nbsp;</div><div class="item" data-value="NA:US:IN">United States, Indiana &nbsp;</div><div class="item" data-value="NA:US:IA">United States, Iowa &nbsp;</div><div class="item" data-value="NA:US:KS">United States, Kansas &nbsp;</div><div class="item" data-value="NA:US:KY">United States, Kentucky &nbsp;</div><div class="item" data-value="NA:US:LA">United States, Louisiana &nbsp;</div><div class="item" data-value="NA:US:ME">United States, Maine &nbsp;</div><div class="item" data-value="NA:US:MD">United States, Maryland &nbsp;</div><div class="item" data-value="NA:US:MA">United States, Massachusetts &nbsp;</div><div class="item" data-value="NA:US:MI">United States, Michigan &nbsp;</div><div class="item" data-value="NA:US:MN">United States, Minnesota &nbsp;</div><div class="item" data-value="NA:US:MS">United States, Mississippi &nbsp;</div><div class="item" data-value="NA:US:MO">United States, Missouri &nbsp;</div><div class="item" data-value="NA:US:MT">United States, Montana &nbsp;</div><div class="item" data-value="NA:US:NE">United States, Nebraska &nbsp;</div><div class="item" data-value="NA:US:NV">United States, Nevada &nbsp;</div><div class="item" data-value="NA:US:NH">United States, New Hampshire &nbsp;</div><div class="item" data-value="NA:US:NJ">United States, New Jersey &nbsp;</div><div class="item" data-value="NA:US:NM">United States, New Mexico &nbsp;</div><div class="item" data-value="NA:US:NY">United States, New York &nbsp;</div><div class="item" data-value="NA:US:NC">United States, North Carolina &nbsp;</div><div class="item" data-value="NA:US:ND">United States, North Dakota &nbsp;</div><div class="item" data-value="NA:US:OH">United States, Ohio &nbsp;</div><div class="item" data-value="NA:US:OK">United States, Oklahoma &nbsp;</div><div class="item" data-value="NA:US:OR">United States, Oregon &nbsp;</div><div class="item" data-value="NA:US:PA">United States, Pennsylvania &nbsp;</div><div class="item" data-value="NA:US:RI">United States, Rhode Island &nbsp;</div><div class="item" data-value="NA:US:SC">United States, South Carolina &nbsp;</div><div class="item" data-value="NA:US:SD">United States, South Dakota &nbsp;</div><div class="item" data-value="NA:US:TN">United States, Tennessee &nbsp;</div><div class="item" data-value="NA:US:TX">United States, Texas &nbsp;</div><div class="item" data-value="NA:US:UT">United States, Utah &nbsp;</div><div class="item" data-value="NA:US:VT">United States, Vermont &nbsp;</div><div class="item" data-value="NA:US:VA">United States, Virginia &nbsp;</div><div class="item" data-value="NA:US:WA">United States, Washington &nbsp;</div><div class="item" data-value="NA:US:WV">United States, West Virginia &nbsp;</div><div class="item" data-value="NA:US:WI">United States, Wisconsin &nbsp;</div><div class="item" data-value="NA:US:WY">United States, Wyoming &nbsp;</div><div class="item" data-value="NA:CA:AB">Canada, Alberta &nbsp;</div><div class="item" data-value="NA:CA:BC">Canada, British Columbia &nbsp;</div><div class="item" data-value="NA:CA:MB">Canada, Manitoba &nbsp;</div><div class="item" data-value="NA:CA:NB">Canada, New Brunswick &nbsp;</div><div class="item" data-value="NA:CA:NF">Canada, Newfoundland and Labrador &nbsp;</div><div class="item" data-value="NA:CA:NS">Canada, Nova Scotia &nbsp;</div><div class="item" data-value="NA:CA:ON">Canada, Ontario &nbsp;</div><div class="item" data-value="NA:CA:PE">Canada, Prince Edward Island &nbsp;</div><div class="item" data-value="NA:CA:QC">Canada, Quebec &nbsp;</div><div class="item" data-value="NA:CA:SK">Canada, Saskatchewan &nbsp;</div><div class="item" data-value="PA:AU:AC">Australia, Australian Capital Territory &nbsp;</div><div class="item" data-value="PA:AU:SW">Australia, New South Wales &nbsp;</div><div class="item" data-value="PA:AU:NT">Australia, Northern Territory &nbsp;</div><div class="item" data-value="PA:AU:QL">Australia, Queensland &nbsp;</div><div class="item" data-value="PA:AU:SA">Australia, South Australia &nbsp;</div><div class="item" data-value="PA:AU:TA">Australia, Tasmania &nbsp;</div><div class="item" data-value="PA:AU:VC">Australia, Victoria &nbsp;</div><div class="item" data-value="PA:AU:WA">Australia, Western Australia &nbsp;</div></div></div>
+        </div>
+        <div class="field">
+            <label>Country 3</label>
+            <div class="ui fluid dropdown selection" tabindex="0"><select name="country3" id="Country3">
+                <option value="" selected="selected">--- Optional --- &nbsp;</option>
+                <option value="NA:US">United States &nbsp;</option>
+                <option value="SS:AF">Afghanistan &nbsp;</option>
+                <option value="EU:AL">Albania &nbsp;</option>
+                <option value="AF:DZ">Algeria &nbsp;</option>
+                <option value="PA:AS">American Samoa &nbsp;</option>
+                <option value="EU:AD">Andorra &nbsp;</option>
+                <option value="AF:AO">Angola &nbsp;</option>
+                <option value="SA:AR">Argentina &nbsp;</option>
+                <option value="NS:AM">Armenia &nbsp;</option>
+                <option value="PA:AU">Australia &nbsp;</option>
+                <option value="EU:AT">Austria &nbsp;</option>
+                <option value="NS:AZ">Azerbaijan &nbsp;</option>
+                <option value="CA:BS">Bahamas &nbsp;</option>
+                <option value="ME:BH">Bahrain &nbsp;</option>
+                <option value="SS:BD">Bangladesh &nbsp;</option>
+                <option value="CA:BB">Barbados &nbsp;</option>
+                <option value="NS:BY">Belarus &nbsp;</option>
+                <option value="EU:BE">Belgium &nbsp;</option>
+                <option value="CA:BZ">Belize &nbsp;</option>
+                <option value="AF:BJ">Benin &nbsp;</option>
+                <option value="CA:BM">Bermuda &nbsp;</option>
+                <option value="SS:BT">Bhutan &nbsp;</option>
+                <option value="SA:BO">Bolivia &nbsp;</option>
+                <option value="EU:BA">Bosnia and Herzegovina &nbsp;</option>
+                <option value="AF:BW">Botswana &nbsp;</option>
+                <option value="SA:BR">Brazil &nbsp;</option>
+                <option value="SE:BN">Brunei Darussalam &nbsp;</option>
+                <option value="EU:BG">Bulgaria &nbsp;</option>
+                <option value="AF:BF">Burkina Faso &nbsp;</option>
+                <option value="AF:BI">Burundi &nbsp;</option>
+                <option value="SE:KH">Cambodia &nbsp;</option>
+                <option value="AF:CM">Cameroon &nbsp;</option>
+                <option value="NA:CA">Canada &nbsp;</option>
+                <option value="AF:CF">Central African Republic &nbsp;</option>
+                <option value="AF:TD">Chad &nbsp;</option>
+                <option value="SA:CL">Chile &nbsp;</option>
+                <option value="ES:CN">China &nbsp;</option>
+                <option value="SA:CO">Colombia &nbsp;</option>
+                <option value="AF:CG">Congo &nbsp;</option>
+                <option value="AF:CD">Congo, The Democratic Republic of the &nbsp;</option>
+                <option value="CA:CR">Costa Rica &nbsp;</option>
+                <option value="EU:HR">Croatia &nbsp;</option>
+                <option value="CA:CU">Cuba &nbsp;</option>
+                <option value="ME:CY">Cyprus &nbsp;</option>
+                <option value="EU:CZ">Czech Republic &nbsp;</option>
+                <option value="AF:CI">Côte D'Ivoire &nbsp;</option>
+                <option value="EU:DK">Denmark &nbsp;</option>
+                <option value="AF:DJ">Djibouti &nbsp;</option>
+                <option value="CA:DO">Dominican Republic &nbsp;</option>
+                <option value="SA:EC">Ecuador &nbsp;</option>
+                <option value="AF:EG">Egypt &nbsp;</option>
+                <option value="CA:SV">El Salvador &nbsp;</option>
+                <option value="AF:GQ">Equatorial Guinea &nbsp;</option>
+                <option value="EU:EE">Estonia &nbsp;</option>
+                <option value="AF:ET">Ethiopia &nbsp;</option>
+                <option value="PA:FJ">Fiji &nbsp;</option>
+                <option value="EU:FI">Finland &nbsp;</option>
+                <option value="EU:CS">Former Serbia and Montenegro &nbsp;</option>
+                <option value="EU:YU">Former Yugoslavia &nbsp;</option>
+                <option value="EU:FR">France &nbsp;</option>
+                <option value="PA:PF">French Polynesia &nbsp;</option>
+                <option value="AF:GA">Gabon &nbsp;</option>
+                <option value="AF:GM">Gambia &nbsp;</option>
+                <option value="NS:GE">Georgia &nbsp;</option>
+                <option value="EU:DE">Germany &nbsp;</option>
+                <option value="AF:GH">Ghana &nbsp;</option>
+                <option value="EU:GR">Greece &nbsp;</option>
+                <option value="CA:GD">Grenada &nbsp;</option>
+                <option value="CA:GP">Guadeloupe &nbsp;</option>
+                <option value="CA:GT">Guatemala &nbsp;</option>
+                <option value="AF:GN">Guinea &nbsp;</option>
+                <option value="AF:GW">Guinea-Bissau &nbsp;</option>
+                <option value="SA:GY">Guyana &nbsp;</option>
+                <option value="CA:HT">Haiti &nbsp;</option>
+                <option value="EU:VA">Holy See (Vatican City State) &nbsp;</option>
+                <option value="CA:HN">Honduras &nbsp;</option>
+                <option value="ES:HK">Hong Kong &nbsp;</option>
+                <option value="EU:HU">Hungary &nbsp;</option>
+                <option value="EU:IS">Iceland &nbsp;</option>
+                <option value="SS:IN">India &nbsp;</option>
+                <option value="SE:ID">Indonesia &nbsp;</option>
+                <option value="ME:IR">Iran, Islamic Republic of &nbsp;</option>
+                <option value="ME:IQ">Iraq &nbsp;</option>
+                <option value="EU:IE">Ireland &nbsp;</option>
+                <option value="ME:IL">Israel &nbsp;</option>
+                <option value="EU:IT">Italy &nbsp;</option>
+                <option value="CA:JM">Jamaica &nbsp;</option>
+                <option value="ES:JP">Japan &nbsp;</option>
+                <option value="ME:JO">Jordan &nbsp;</option>
+                <option value="NS:KZ">Kazakhstan &nbsp;</option>
+                <option value="AF:KE">Kenya &nbsp;</option>
+                <option value="ES:KP">Korea, Democratic People's Republic of &nbsp;</option>
+                <option value="ES:KR">Korea, Republic of &nbsp;</option>
+                <option value="ME:KW">Kuwait &nbsp;</option>
+                <option value="NS:KG">Kyrgyzstan &nbsp;</option>
+                <option value="SE:LA">Lao People's Democratic Republic &nbsp;</option>
+                <option value="EU:LV">Latvia &nbsp;</option>
+                <option value="ME:LB">Lebanon &nbsp;</option>
+                <option value="AF:LS">Lesotho &nbsp;</option>
+                <option value="AF:LR">Liberia &nbsp;</option>
+                <option value="AF:LY">Libyan Arab Jamahiriya &nbsp;</option>
+                <option value="EU:LT">Lithuania &nbsp;</option>
+                <option value="EU:LU">Luxembourg &nbsp;</option>
+                <option value="EU:MK">Macedonia, The Former Yugoslav Republic of &nbsp;</option>
+                <option value="AF:MG">Madagascar &nbsp;</option>
+                <option value="AF:MW">Malawi &nbsp;</option>
+                <option value="SE:MY">Malaysia &nbsp;</option>
+                <option value="AF:ML">Mali &nbsp;</option>
+                <option value="EU:MT">Malta &nbsp;</option>
+                <option value="CA:MQ">Martinique &nbsp;</option>
+                <option value="AF:MR">Mauritania &nbsp;</option>
+                <option value="AF:MU">Mauritius &nbsp;</option>
+                <option value="NA:MX">Mexico &nbsp;</option>
+                <option value="NS:MD">Moldova, Republic of &nbsp;</option>
+                <option value="EU:MC">Monaco &nbsp;</option>
+                <option value="ES:MN">Mongolia &nbsp;</option>
+                <option value="EU:ME">Montenegro &nbsp;</option>
+                <option value="AF:MA">Morocco &nbsp;</option>
+                <option value="AF:MZ">Mozambique &nbsp;</option>
+                <option value="SE:MM">Myanmar &nbsp;</option>
+                <option value="SS:NP">Nepal &nbsp;</option>
+                <option value="EU:NL">Netherlands &nbsp;</option>
+                <option value="EU:AN">Netherlands Antilles &nbsp;</option>
+                <option value="PA:NC">New Caledonia &nbsp;</option>
+                <option value="PA:NZ">New Zealand &nbsp;</option>
+                <option value="CA:NI">Nicaragua &nbsp;</option>
+                <option value="AF:NE">Niger &nbsp;</option>
+                <option value="AF:NG">Nigeria &nbsp;</option>
+                <option value="PA:MP">Northern Mariana Islands &nbsp;</option>
+                <option value="EU:NO">Norway &nbsp;</option>
+                <option value="ME:OM">Oman &nbsp;</option>
+                <option value="SS:PK">Pakistan &nbsp;</option>
+                <option value="CA:PA">Panama &nbsp;</option>
+                <option value="PA:PG">Papua New Guinea &nbsp;</option>
+                <option value="SA:PY">Paraguay &nbsp;</option>
+                <option value="SA:PE">Peru &nbsp;</option>
+                <option value="SE:PH">Philippines &nbsp;</option>
+                <option value="EU:PL">Poland &nbsp;</option>
+                <option value="EU:PT">Portugal &nbsp;</option>
+                <option value="CA:PR">Puerto Rico &nbsp;</option>
+                <option value="ME:QA">Qatar &nbsp;</option>
+                <option value="EU:RO">Romania &nbsp;</option>
+                <option value="NS:RU">Russian Federation &nbsp;</option>
+                <option value="AF:RW">Rwanda &nbsp;</option>
+                <option value="AF:RE">Réunion &nbsp;</option>
+                <option value="CA:KN">Saint Kitts and Nevis &nbsp;</option>
+                <option value="ME:SA">Saudi Arabia &nbsp;</option>
+                <option value="AF:SN">Senegal &nbsp;</option>
+                <option value="EU:RS">Serbia &nbsp;</option>
+                <option value="AF:SL">Sierra Leone &nbsp;</option>
+                <option value="SE:SG">Singapore &nbsp;</option>
+                <option value="EU:SK">Slovakia &nbsp;</option>
+                <option value="EU:SI">Slovenia &nbsp;</option>
+                <option value="PA:SB">Solomon Islands &nbsp;</option>
+                <option value="AF:ZA">South Africa &nbsp;</option>
+                <option value="EU:ES">Spain &nbsp;</option>
+                <option value="SS:LK">Sri Lanka &nbsp;</option>
+                <option value="AF:SD">Sudan &nbsp;</option>
+                <option value="AF:SZ">Swaziland &nbsp;</option>
+                <option value="EU:SE">Sweden &nbsp;</option>
+                <option value="EU:CH">Switzerland &nbsp;</option>
+                <option value="ME:SY">Syrian Arab Republic &nbsp;</option>
+                <option value="ES:TW">Taiwan &nbsp;</option>
+                <option value="AF:TZ">Tanzania &nbsp;</option>
+                <option value="SE:TH">Thailand &nbsp;</option>
+                <option value="AF:TG">Togo &nbsp;</option>
+                <option value="CA:TT">Trinidad and Tobago &nbsp;</option>
+                <option value="AF:TN">Tunisia &nbsp;</option>
+                <option value="ME:TR">Turkey &nbsp;</option>
+                <option value="AF:UG">Uganda &nbsp;</option>
+                <option value="NS:UA">Ukraine &nbsp;</option>
+                <option value="ME:AE">United Arab Emirates &nbsp;</option>
+                <option value="EU:GB">United Kingdom &nbsp;</option>
+                <option value="NA:US">United States &nbsp;</option>
+                <option value="SA:UY">Uruguay &nbsp;</option>
+                <option value="NS:UZ">Uzbekistan &nbsp;</option>
+                <option value="PA:VU">Vanuatu &nbsp;</option>
+                <option value="SA:VE">Venezuela &nbsp;</option>
+                <option value="SE:VN">Vietnam &nbsp;</option>
+                <option value="CA:VI">Virgin Islands (U.S.) &nbsp;</option>
+                <option value="ME:YE">Yemen &nbsp;</option>
+                <option value="AF:ZM">Zambia &nbsp;</option>
+                <option value="AF:ZW">Zimbabwe &nbsp;</option>
+            </select><i class="dropdown icon"></i><div class="default text">--- Optional --- &nbsp;</div><div class="menu" tabindex="-1"><div class="item" data-value="NA:US">United States &nbsp;</div><div class="item" data-value="SS:AF">Afghanistan &nbsp;</div><div class="item" data-value="EU:AL">Albania &nbsp;</div><div class="item" data-value="AF:DZ">Algeria &nbsp;</div><div class="item" data-value="PA:AS">American Samoa &nbsp;</div><div class="item" data-value="EU:AD">Andorra &nbsp;</div><div class="item" data-value="AF:AO">Angola &nbsp;</div><div class="item" data-value="SA:AR">Argentina &nbsp;</div><div class="item" data-value="NS:AM">Armenia &nbsp;</div><div class="item" data-value="PA:AU">Australia &nbsp;</div><div class="item" data-value="EU:AT">Austria &nbsp;</div><div class="item" data-value="NS:AZ">Azerbaijan &nbsp;</div><div class="item" data-value="CA:BS">Bahamas &nbsp;</div><div class="item" data-value="ME:BH">Bahrain &nbsp;</div><div class="item" data-value="SS:BD">Bangladesh &nbsp;</div><div class="item" data-value="CA:BB">Barbados &nbsp;</div><div class="item" data-value="NS:BY">Belarus &nbsp;</div><div class="item" data-value="EU:BE">Belgium &nbsp;</div><div class="item" data-value="CA:BZ">Belize &nbsp;</div><div class="item" data-value="AF:BJ">Benin &nbsp;</div><div class="item" data-value="CA:BM">Bermuda &nbsp;</div><div class="item" data-value="SS:BT">Bhutan &nbsp;</div><div class="item" data-value="SA:BO">Bolivia &nbsp;</div><div class="item" data-value="EU:BA">Bosnia and Herzegovina &nbsp;</div><div class="item" data-value="AF:BW">Botswana &nbsp;</div><div class="item" data-value="SA:BR">Brazil &nbsp;</div><div class="item" data-value="SE:BN">Brunei Darussalam &nbsp;</div><div class="item" data-value="EU:BG">Bulgaria &nbsp;</div><div class="item" data-value="AF:BF">Burkina Faso &nbsp;</div><div class="item" data-value="AF:BI">Burundi &nbsp;</div><div class="item" data-value="SE:KH">Cambodia &nbsp;</div><div class="item" data-value="AF:CM">Cameroon &nbsp;</div><div class="item" data-value="NA:CA">Canada &nbsp;</div><div class="item" data-value="AF:CF">Central African Republic &nbsp;</div><div class="item" data-value="AF:TD">Chad &nbsp;</div><div class="item" data-value="SA:CL">Chile &nbsp;</div><div class="item" data-value="ES:CN">China &nbsp;</div><div class="item" data-value="SA:CO">Colombia &nbsp;</div><div class="item" data-value="AF:CG">Congo &nbsp;</div><div class="item" data-value="AF:CD">Congo, The Democratic Republic of the &nbsp;</div><div class="item" data-value="CA:CR">Costa Rica &nbsp;</div><div class="item" data-value="EU:HR">Croatia &nbsp;</div><div class="item" data-value="CA:CU">Cuba &nbsp;</div><div class="item" data-value="ME:CY">Cyprus &nbsp;</div><div class="item" data-value="EU:CZ">Czech Republic &nbsp;</div><div class="item" data-value="AF:CI">Côte D'Ivoire &nbsp;</div><div class="item" data-value="EU:DK">Denmark &nbsp;</div><div class="item" data-value="AF:DJ">Djibouti &nbsp;</div><div class="item" data-value="CA:DO">Dominican Republic &nbsp;</div><div class="item" data-value="SA:EC">Ecuador &nbsp;</div><div class="item" data-value="AF:EG">Egypt &nbsp;</div><div class="item" data-value="CA:SV">El Salvador &nbsp;</div><div class="item" data-value="AF:GQ">Equatorial Guinea &nbsp;</div><div class="item" data-value="EU:EE">Estonia &nbsp;</div><div class="item" data-value="AF:ET">Ethiopia &nbsp;</div><div class="item" data-value="PA:FJ">Fiji &nbsp;</div><div class="item" data-value="EU:FI">Finland &nbsp;</div><div class="item" data-value="EU:CS">Former Serbia and Montenegro &nbsp;</div><div class="item" data-value="EU:YU">Former Yugoslavia &nbsp;</div><div class="item" data-value="EU:FR">France &nbsp;</div><div class="item" data-value="PA:PF">French Polynesia &nbsp;</div><div class="item" data-value="AF:GA">Gabon &nbsp;</div><div class="item" data-value="AF:GM">Gambia &nbsp;</div><div class="item" data-value="NS:GE">Georgia &nbsp;</div><div class="item" data-value="EU:DE">Germany &nbsp;</div><div class="item" data-value="AF:GH">Ghana &nbsp;</div><div class="item" data-value="EU:GR">Greece &nbsp;</div><div class="item" data-value="CA:GD">Grenada &nbsp;</div><div class="item" data-value="CA:GP">Guadeloupe &nbsp;</div><div class="item" data-value="CA:GT">Guatemala &nbsp;</div><div class="item" data-value="AF:GN">Guinea &nbsp;</div><div class="item" data-value="AF:GW">Guinea-Bissau &nbsp;</div><div class="item" data-value="SA:GY">Guyana &nbsp;</div><div class="item" data-value="CA:HT">Haiti &nbsp;</div><div class="item" data-value="EU:VA">Holy See (Vatican City State) &nbsp;</div><div class="item" data-value="CA:HN">Honduras &nbsp;</div><div class="item" data-value="ES:HK">Hong Kong &nbsp;</div><div class="item" data-value="EU:HU">Hungary &nbsp;</div><div class="item" data-value="EU:IS">Iceland &nbsp;</div><div class="item" data-value="SS:IN">India &nbsp;</div><div class="item" data-value="SE:ID">Indonesia &nbsp;</div><div class="item" data-value="ME:IR">Iran, Islamic Republic of &nbsp;</div><div class="item" data-value="ME:IQ">Iraq &nbsp;</div><div class="item" data-value="EU:IE">Ireland &nbsp;</div><div class="item" data-value="ME:IL">Israel &nbsp;</div><div class="item" data-value="EU:IT">Italy &nbsp;</div><div class="item" data-value="CA:JM">Jamaica &nbsp;</div><div class="item" data-value="ES:JP">Japan &nbsp;</div><div class="item" data-value="ME:JO">Jordan &nbsp;</div><div class="item" data-value="NS:KZ">Kazakhstan &nbsp;</div><div class="item" data-value="AF:KE">Kenya &nbsp;</div><div class="item" data-value="ES:KP">Korea, Democratic People's Republic of &nbsp;</div><div class="item" data-value="ES:KR">Korea, Republic of &nbsp;</div><div class="item" data-value="ME:KW">Kuwait &nbsp;</div><div class="item" data-value="NS:KG">Kyrgyzstan &nbsp;</div><div class="item" data-value="SE:LA">Lao People's Democratic Republic &nbsp;</div><div class="item" data-value="EU:LV">Latvia &nbsp;</div><div class="item" data-value="ME:LB">Lebanon &nbsp;</div><div class="item" data-value="AF:LS">Lesotho &nbsp;</div><div class="item" data-value="AF:LR">Liberia &nbsp;</div><div class="item" data-value="AF:LY">Libyan Arab Jamahiriya &nbsp;</div><div class="item" data-value="EU:LT">Lithuania &nbsp;</div><div class="item" data-value="EU:LU">Luxembourg &nbsp;</div><div class="item" data-value="EU:MK">Macedonia, The Former Yugoslav Republic of &nbsp;</div><div class="item" data-value="AF:MG">Madagascar &nbsp;</div><div class="item" data-value="AF:MW">Malawi &nbsp;</div><div class="item" data-value="SE:MY">Malaysia &nbsp;</div><div class="item" data-value="AF:ML">Mali &nbsp;</div><div class="item" data-value="EU:MT">Malta &nbsp;</div><div class="item" data-value="CA:MQ">Martinique &nbsp;</div><div class="item" data-value="AF:MR">Mauritania &nbsp;</div><div class="item" data-value="AF:MU">Mauritius &nbsp;</div><div class="item" data-value="NA:MX">Mexico &nbsp;</div><div class="item" data-value="NS:MD">Moldova, Republic of &nbsp;</div><div class="item" data-value="EU:MC">Monaco &nbsp;</div><div class="item" data-value="ES:MN">Mongolia &nbsp;</div><div class="item" data-value="EU:ME">Montenegro &nbsp;</div><div class="item" data-value="AF:MA">Morocco &nbsp;</div><div class="item" data-value="AF:MZ">Mozambique &nbsp;</div><div class="item" data-value="SE:MM">Myanmar &nbsp;</div><div class="item" data-value="SS:NP">Nepal &nbsp;</div><div class="item" data-value="EU:NL">Netherlands &nbsp;</div><div class="item" data-value="EU:AN">Netherlands Antilles &nbsp;</div><div class="item" data-value="PA:NC">New Caledonia &nbsp;</div><div class="item" data-value="PA:NZ">New Zealand &nbsp;</div><div class="item" data-value="CA:NI">Nicaragua &nbsp;</div><div class="item" data-value="AF:NE">Niger &nbsp;</div><div class="item" data-value="AF:NG">Nigeria &nbsp;</div><div class="item" data-value="PA:MP">Northern Mariana Islands &nbsp;</div><div class="item" data-value="EU:NO">Norway &nbsp;</div><div class="item" data-value="ME:OM">Oman &nbsp;</div><div class="item" data-value="SS:PK">Pakistan &nbsp;</div><div class="item" data-value="CA:PA">Panama &nbsp;</div><div class="item" data-value="PA:PG">Papua New Guinea &nbsp;</div><div class="item" data-value="SA:PY">Paraguay &nbsp;</div><div class="item" data-value="SA:PE">Peru &nbsp;</div><div class="item" data-value="SE:PH">Philippines &nbsp;</div><div class="item" data-value="EU:PL">Poland &nbsp;</div><div class="item" data-value="EU:PT">Portugal &nbsp;</div><div class="item" data-value="CA:PR">Puerto Rico &nbsp;</div><div class="item" data-value="ME:QA">Qatar &nbsp;</div><div class="item" data-value="EU:RO">Romania &nbsp;</div><div class="item" data-value="NS:RU">Russian Federation &nbsp;</div><div class="item" data-value="AF:RW">Rwanda &nbsp;</div><div class="item" data-value="AF:RE">Réunion &nbsp;</div><div class="item" data-value="CA:KN">Saint Kitts and Nevis &nbsp;</div><div class="item" data-value="ME:SA">Saudi Arabia &nbsp;</div><div class="item" data-value="AF:SN">Senegal &nbsp;</div><div class="item" data-value="EU:RS">Serbia &nbsp;</div><div class="item" data-value="AF:SL">Sierra Leone &nbsp;</div><div class="item" data-value="SE:SG">Singapore &nbsp;</div><div class="item" data-value="EU:SK">Slovakia &nbsp;</div><div class="item" data-value="EU:SI">Slovenia &nbsp;</div><div class="item" data-value="PA:SB">Solomon Islands &nbsp;</div><div class="item" data-value="AF:ZA">South Africa &nbsp;</div><div class="item" data-value="EU:ES">Spain &nbsp;</div><div class="item" data-value="SS:LK">Sri Lanka &nbsp;</div><div class="item" data-value="AF:SD">Sudan &nbsp;</div><div class="item" data-value="AF:SZ">Swaziland &nbsp;</div><div class="item" data-value="EU:SE">Sweden &nbsp;</div><div class="item" data-value="EU:CH">Switzerland &nbsp;</div><div class="item" data-value="ME:SY">Syrian Arab Republic &nbsp;</div><div class="item" data-value="ES:TW">Taiwan &nbsp;</div><div class="item" data-value="AF:TZ">Tanzania &nbsp;</div><div class="item" data-value="SE:TH">Thailand &nbsp;</div><div class="item" data-value="AF:TG">Togo &nbsp;</div><div class="item" data-value="CA:TT">Trinidad and Tobago &nbsp;</div><div class="item" data-value="AF:TN">Tunisia &nbsp;</div><div class="item" data-value="ME:TR">Turkey &nbsp;</div><div class="item" data-value="AF:UG">Uganda &nbsp;</div><div class="item" data-value="NS:UA">Ukraine &nbsp;</div><div class="item" data-value="ME:AE">United Arab Emirates &nbsp;</div><div class="item" data-value="EU:GB">United Kingdom &nbsp;</div><div class="item" data-value="NA:US">United States &nbsp;</div><div class="item" data-value="SA:UY">Uruguay &nbsp;</div><div class="item" data-value="NS:UZ">Uzbekistan &nbsp;</div><div class="item" data-value="PA:VU">Vanuatu &nbsp;</div><div class="item" data-value="SA:VE">Venezuela &nbsp;</div><div class="item" data-value="SE:VN">Vietnam &nbsp;</div><div class="item" data-value="CA:VI">Virgin Islands (U.S.) &nbsp;</div><div class="item" data-value="ME:YE">Yemen &nbsp;</div><div class="item" data-value="AF:ZM">Zambia &nbsp;</div><div class="item" data-value="AF:ZW">Zimbabwe &nbsp;</div></div></div>
+        </div>
+    </div>
+
+    <h2 class="ui dividing header">Eligibility Criteria:</h2>
+    <div class="two fields">
+        <div class="field">
+            <label>Age Group</label>
+            <div class=" three fields">
+                <div class="field">
+                    <div class="ui checkbox">
+                        <input type="checkbox" name="age" id="IncludeChild" value="0">
+                        <label>Child (birth-17) </label>
+                    </div>
+                </div>
+                <div class="field">
+                    <div class="ui checkbox">
+                        <input type="checkbox" name="age" id="IncludeAdult" value="1">
+                        <label>Adult (18-65) </label>
+                    </div>
+                </div>
+                <div class="field">
+                    <div class="ui checkbox">
+                        <input type="checkbox" name="age" id="IncludeSenior" value="2">
+                        <label>Senior (66+) </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="field">
+            <label>Gender</label>
+            <div class="ui fluid dropdown selection" tabindex="0"><select name="gndr" id="Gender">
+                <option value="">All Studies</option>
+                <option value="Female">Studies with Female Participants</option>
+                <option value="Male">Studies with Male Participants</option>
+            </select><i class="dropdown icon"></i><div class="default text">All Studies</div><div class="menu" tabindex="-1"><div class="item" data-value="Female">Studies with Female Participants</div><div class="item" data-value="Male">Studies with Male Participants</div></div></div>
+        </div>
+    </div>
+
+    <h2 class="ui dividing header">Additional Criteria:</h2>
+    <div class="two fields">
+        <div class="field">
+            <label>Accepts Healthy Volunteers</label>
+            <div class="field">
+                <div class="ui checkbox">
+                        <input type="checkbox" name="hlth" id="AcceptsHealthy" value="Y">
+                        <label> Healthy volunteers may participate in the study.</label>
+                </div>
+            </div>
+        </div>
+        <div class="field">
+            <label>Safety Issue</label>
+            <div class="field">
+                <div class="ui checkbox">
+                        <input type="checkbox" name="safe" id="SafetyIssue" value="Y">
+                        <label>Has an outcome measure designated as a safety issue.</label>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="field">
+        <label>Phase</label>
+        <div class="six fields">
+            <div class="field">
+                <div class="ui checkbox">
+                    <input type="checkbox" name="phase" id="IncludePhase0" value="4">
+                    <label>Phase 0</label>
+                </div>
+            </div>
+            <div class="field">
+                <div class="ui checkbox">
+                    <input type="checkbox" name="phase" id="IncludePhase1" value="0">
+                    <label>Phase 1</label>
+                </div>
+            </div>
+            <div class="field">
+                <div class="ui checkbox">
+                    <input type="checkbox" name="phase" id="IncludePhase2" value="1">
+                    <label>Phase 2</label>
+                </div>
+            </div>
+            <div class="field">
+                <div class="ui checkbox">
+                    <input type="checkbox" name="phase" id="IncludePhase3" value="2">
+                    <label>Phase 3</label>
+                </div>
+            </div>
+            <div class="field">
+                <div class="ui checkbox">
+                    <input type="checkbox" name="phase" id="IncludePhase4" value="3">
+                    <label>Phase 4</label>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="field">
+        <label>Funder Type</label>
+        <div class="four fields">
+            <div class="field">
+                <div class="ui checkbox">
+                    <input type="checkbox" name="fund" id="IncludeNIH" value="0">
+                    <label>NIH</label>
+                </div>
+            </div>
+            <div class="field">
+                <div class="ui checkbox">
+                    <input type="checkbox" name="fund" id="IncludeFed" value="1">
+                    <label>Other U.S. Federal Agency</label>
+                </div>
+            </div>
+            <div class="field">
+                <div class="ui checkbox">
+                    <input type="checkbox" name="fund" id="IncludeIndustry" value="2">
+                    <label>Industry</label>
+                </div>
+            </div>
+            <div class="field">
+                <div class="ui checkbox">
+                    <input type="checkbox" name="fund" id="IncludeOther" value="3">
+                    <label>All others </label>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="two fields">
+        <div class="field">
+            <label>First Received (MM/DD/YYYY)</label>
+            <div class="two fields">
+                <div class="field">
+                    <span class="date_text">from</span><input class="input_field field_text date" type="text" name="rcv_s" id="FirstReceivedStartDate">
+                </div>
+                <div class="field">
+                    <span class="date_text">to</span><input class="input_field field_text date" type="text" name="rcv_e" id="FirstReceivedEndDate">
+                </div>
+            </div>
+        </div>
+            <div class="field">
+            <label>Last Updated (MM/DD/YYYY)</label>
+            <div class="two fields">
+                <div class="field">
+                    <span class="date_text">from</span><input class="input_field field_text date" type="text" name="lup_s" id="LastUpdatedStartDate">
+                </div>
+                <div class="field">
+                    <span class="date_text">to</span><input class="input_field field_text date" type="text" name="lup_e" id="LastUpdatedEndDate">
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="ui secondary submit button" id="search_advs">Search</div>
+
+</form>
+</div>
+<div class="ui hidden divider"></div>
+<div id="question_container" class="ui container">
+    <div class="ui form">
+    <div class="ui grid two compact segments horizontal">
+        <div class="ui segment ten wide column">
+            <div class="ui top attached label">question panel</div>
+            <div class="field" id="question_field">
+                <h3 class="ui header" >
+                    <label id="question_number">Please anwser the following FIVE questions first! </label>
+                </h3>
+                <h3 class="ui header">
+                    <label id="domain_check">What is your/your patient's age?</label>
+                </h3>
+                <div class="ui fluid field" tabindex="0">
+                    <input type="text" placeholder="Please type in your age" class="">
+                </div>
+               
+                <h3 class="ui header">
+                    <label id="domain_check">What is your/your patient's gender (Male, Female, Non-Binary, Other)?</label>
+                </h3>
+                <div class="ui fluid dropdown selection" tabindex="0">
+                    <select id="domain" name="domain">
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                    <option value="both">Non-Binary</option>
+                    <option value="trans">Other</option>
+                    </select>
+                    <i class="dropdown icon"></i>
+                    <div class="text">Any</div>
+                    <div class="menu" tabindex="-1">
+                        <div class="item" data-value="male">Male</div>
+                        <div class="item" data-value="female">Female</div>
+                        <div class="item" data-value="both">Non-Binary</div>
+                        <div class="item" data-value="trans">Other</div>
+                    </div>
+                </div>
+
+                <div class="ui divider hidden"></div>
+                <h3 class="ui header">
+                    <label id="domain_check">Have you/your patient been diagnosed with a COVID-19/coronavirus infection (Yes, No, Yes but now cleared)?</label>
+                </h3>
+                <div class="ui fluid dropdown selection" tabindex="0">
+                    <select id="domain" name="domain">
+                    <option value="yes">Yes</option>
+                    <option value="measurement">No</option>
+                    <option value="drug">Cleared</option>
+                    <option value="observation">Yes/No</option>
+                    </select>
+                    <i class="dropdown icon"></i>
+                    <div class="text">Any</div>
+                    <div class="menu" tabindex="-1">
+                        <div class="item" data-value="yes">Yes</div>
+                        <div class="item" data-value="measurement">No</div>
+                        <div class="item" data-value="drug">Cleared</div>
+                        <div class="item" data-value="observation">Yes/No</div>
+                    </div>
+                </div>
+                
+                <div class="ui divider hidden"></div>
+                
+                <div class="ui container" id="time_container" style="">
+                    <h3 class="ui header">
+                        <label>Could you provide your diagnosis time ?</label></h3>
+                    
+                        <div class="field">
+                            <div class="ui calendar" id="rangestart" time_string="">
+                                <div class="ui input left icon"><div class="ui popup calendar bottom left transition hidden" style="top: 38px; left: 0px; bottom: auto; right: auto;"><table class="ui celled center aligned unstackable table seven column day"><thead><tr><th colspan="7"><span class="link">April 2020</span><span class="prev link"><i class="chevron left icon"></i></span><span class="next link"><i class="chevron right icon"></i></span></th></tr><tr><th>S</th><th>M</th><th>T</th><th>W</th><th>T</th><th>F</th><th>S</th></tr></thead><tbody><tr><td class="link adjacent disabled">29</td><td class="link adjacent disabled">30</td><td class="link adjacent disabled">31</td><td class="link">1</td><td class="link">2</td><td class="link focus">3</td><td class="link">4</td></tr><tr><td class="link">5</td><td class="link">6</td><td class="link today">7</td><td class="link">8</td><td class="link">9</td><td class="link">10</td><td class="link">11</td></tr><tr><td class="link">12</td><td class="link">13</td><td class="link">14</td><td class="link">15</td><td class="link">16</td><td class="link">17</td><td class="link">18</td></tr><tr><td class="link">19</td><td class="link">20</td><td class="link">21</td><td class="link">22</td><td class="link">23</td><td class="link">24</td><td class="link">25</td></tr><tr><td class="link">26</td><td class="link">27</td><td class="link">28</td><td class="link">29</td><td class="link">30</td><td class="link adjacent disabled">1</td><td class="link adjacent disabled">2</td></tr><tr><td class="link adjacent disabled">3</td><td class="link adjacent disabled">4</td><td class="link adjacent disabled">5</td><td class="link adjacent disabled">6</td><td class="link adjacent disabled">7</td><td class="link adjacent disabled">8</td><td class="link adjacent disabled">9</td></tr><tr><td colspan="7" class="today link">Today</td></tr></tbody></table></div>
+                                    <i class="calendar icon"></i>
+                                    <input type="text" placeholder="Your COVID-19 Diagnosis time" class="">
+                                </div>
+                            </div>
+                       
+                    </div>
+                </div>
+
+                <!-- <div class="ui divider hidden"></div> -->
+                <h3 class="ui header">
+                    <label id="domain_check">Are you/your patient currently hospitalized or in an Intensive Care Unit (ICU)? </label>
+                </h3>
+                <div class="ui fluid dropdown selection" tabindex="0">
+                    <select id="domain" name="domain">
+                    <option value="any">Any</option>
+                    <option value="hospitalized">Hospitalized</option>
+                    <option value="icu">Intensive Care Unit</option>
+                    <option value="other">Other</option>
+                    </select>
+                    <i class="dropdown icon"></i>
+                    <div class="text">Any</div>
+                    <div class="menu" tabindex="-1">
+                        <!-- <div class="item" data-value="any">Any</div> -->
+                        <div class="item" data-value="hospitalized">Hospitalized</div>
+                        <div class="item" data-value="icu">Intensive Care Unit</div>
+                        <div class="item" data-value="other">Other</div>
+                    </div>
+                </div>
+
+                <div class="ui divider hidden"></div>
+                <h3 class="ui header">
+                    <label id="domain_check">Are you/your patient currently pregnant (Yes, No, I don't know)?</label>
+                </h3>
+                <div class="ui fluid dropdown selection" tabindex="0">
+                    <select id="domain" name="domain">
+                    <option value="no">No</option>
+                    <option value="yes">Yes</option>
+                    <option value="idn">I don't Know</option>
+                    </select>
+                    <i class="dropdown icon"></i>
+                    <div class="text">Any</div>
+                    <div class="menu" tabindex="-1">
+                        <div class="item" data-value="no">No</div>
+                        <div class="item" data-value="yes">Yes</div>
+                        <div class="item" data-value="idn">I don't Know</div>
+                    </div>
+                </div>
+
+                
+
+
+            </div>
+
+
+
+            <div class="ui green submit button" id="confirmbutton">Confirm</div>
+            <div id="close_question" class="ui red button" onclick="">Exit Questionnaire</div>
+
+
+        </div>
+
+        
+    </div>
+
+</div>
+
+
+</div>
+<div class="ui hidden divider"></div>
+<div id="results_container" class="ui container" style="">
+    <div id="search_results_container" class="ui container" style="">
+    <h2 id="search_results_summary" class="ui dividing header">
+        <div class="ui ignored warning message">Found <code id="search_n">221</code> related trials
+            for <a id="tag_name" class="ui big label orange">COVID-19</a>in <a id="tag_name" class="ui big label orange">NEW YORK</a> </div>
+        <div class="ui ignored negative message" id="qfilt_warning_1" style="display: none">Eligibility Criteria
+            Question
+            NOT
+            Available (resulting trials must be less than 25,000). Please use advanced search to restrict the number of
+            trials</div>
+        <div class="ui ignored negative message" id="qfilt_warning_2" style="display: none">No results found. Please
+            click
+            Home to restart search</div>
+    </h2>
+    <div class="ui primary ignored button center massive fluid" id="qfilt" style=""><i class="icon user"></i> Find Your Perfect
+        Clinical Trial </div>
+
+    <div class="ui container" id="search_results" style="display: none">
+        <div class="ui relaxed divided list"><div class="item"><i class="ui large icon middle aligned">1 </i><div class="content"><a href="http://clinicaltrials.gov/ct2/show/NCT04054986" target="_blank" class="header">Study of the Imaging Agent 18F-Var3 in Patients With Breast Cancer</a><div class="description"><p> Conditions: <code>Breast Cancer</code></p></div></div></div><div class="item"><i class="ui large icon middle aligned">2 </i><div class="content"><a href="http://clinicaltrials.gov/ct2/show/NCT01943695" target="_blank" class="header">Supervised Aerobic Training During or After Chemotherapy for Operable Breast Cancer</a><div class="description"><p> Conditions: <code>Breast Cancer</code></p></div></div></div><div class="item"><i class="ui large icon middle aligned">3 </i><div class="content"><a href="http://clinicaltrials.gov/ct2/show/NCT03742986" target="_blank" class="header">Trial of Nivolumab With Chemotherapy as Neoadjuvant Treatment in Inflammatory Breast Cancer (IBC)</a><div class="description"><p> Conditions: <code>Breast Cancer</code></p></div></div></div><div class="item"><i class="ui large icon middle aligned">4 </i><div class="content"><a href="http://clinicaltrials.gov/ct2/show/NCT03400215" target="_blank" class="header">Gradient-Echo Spectroscopic Imaging Study of Saturated Fat and Breast Cancer</a><div class="description"><p> Conditions: <code>Breast Cancer</code></p></div></div></div><div class="item"><i class="ui large icon middle aligned">5 </i><div class="content"><a href="http://clinicaltrials.gov/ct2/show/NCT02900469" target="_blank" class="header">Presurgical Trial of Denosumab in Breast Cancer</a><div class="description"><p> Conditions: <code>Breast Cancer</code></p></div></div></div><div class="item"><i class="ui large icon middle aligned">6 </i><div class="content"><a href="http://clinicaltrials.gov/ct2/show/NCT03750240" target="_blank" class="header">Metabolic Sodium MRI to Assess Early Response of Breast Cancer to Neoadjuvant Chemotherapy</a><div class="description"><p> Conditions: <code>Breast Cancer,Triple Negative Breast Cancer</code></p></div></div></div><div class="item"><i class="ui large icon middle aligned">7 </i><div class="content"><a href="http://clinicaltrials.gov/ct2/show/NCT03344536" target="_blank" class="header">A Study of Debio 1347 Plus Fulvestrant in Patients With Metastatic Breast Cancer</a><div class="description"><p> Conditions: <code>Breast Cancer</code></p></div></div></div><div class="item"><i class="ui large icon middle aligned">8 </i><div class="content"><a href="http://clinicaltrials.gov/ct2/show/NCT02977468" target="_blank" class="header">Effects of MK-3475 (Pembrolizumab) on the Breast Tumor Microenvironment in Triple Negative Breast Cancer</a><div class="description"><p> Conditions: <code>Triple Negative Breast Cancer</code></p></div></div></div><div class="item"><i class="ui large icon middle aligned">9 </i><div class="content"><a href="http://clinicaltrials.gov/ct2/show/NCT03510988" target="_blank" class="header">Dedicated Breast PET/MRI in Evaluation of Extent of Disease in Women With Newly Diagnosed Breast Cancer</a><div class="description"><p> Conditions: <code>Newly Diagnosed Breast Cancer</code></p></div></div></div><div class="item"><i class="ui large icon middle aligned">10 </i><div class="content"><a href="http://clinicaltrials.gov/ct2/show/NCT03988595" target="_blank" class="header">Exercise Treatment With Standard Therapy for Metastatic Breast Cancer</a><div class="description"><p> Conditions: <code>Hormone Receptor Positive Metastatic Breast Cancer</code></p></div></div></div><div class="item"><i class="ui large icon middle aligned">11 </i><div class="content"><a href="http://clinicaltrials.gov/ct2/show/NCT02494869" target="_blank" class="header">Dose-Response of Aerobic Training in Women at High-Risk for Development of Breast Cancer</a><div class="description"><p> Conditions: <code>High Risk for Developing Breast Cancer</code></p></div></div></div><div class="item"><i class="ui large icon middle aligned">12 </i><div class="content"><a href="http://clinicaltrials.gov/ct2/show/NCT01980823" target="_blank" class="header">Pre-Surgical Trial of the Combination of Metformin and Atorvastatin in Newly Diagnosed Operable Breast Cancer</a><div class="description"><p> Conditions: <code>Breast Cancer,Breast Tumors,Cancer of Breast</code></p></div></div></div><div class="item"><i class="ui large icon middle aligned">13 </i><div class="content"><a href="http://clinicaltrials.gov/ct2/show/NCT03069742" target="_blank" class="header">Study of Web-based Decision Aids for Increasing Breast Cancer Chemoprevention in the Primary Care Setting</a><div class="description"><p> Conditions: <code>Breast Neoplasm</code></p></div></div></div><div class="item"><i class="ui large icon middle aligned">14 </i><div class="content"><a href="http://clinicaltrials.gov/ct2/show/NCT04180579" target="_blank" class="header">Safety of Lower Scalp Cooling Temperature to Prevent Hair Loss From Chemotherapy in Breast Cancer Patients</a><div class="description"><p> Conditions: <code>Breast Cancer,Breast Cancer Stage I,Breast Cancer Stage II,Breast Cancer Stage III</code></p></div></div></div><div class="item"><i class="ui large icon middle aligned">15 </i><div class="content"><a href="http://clinicaltrials.gov/ct2/show/NCT03768492" target="_blank" class="header">Study of the Safety and Efficacy of a Caffeine-based Antifibrosis Cream in Patients With Breast Cancer Undergoing Radiation Therapy</a><div class="description"><p> Conditions: <code>Carcinoma Breast</code></p></div></div></div><div class="item"><i class="ui large icon middle aligned">16 </i><div class="content"><a href="http://clinicaltrials.gov/ct2/show/NCT02531932" target="_blank" class="header">Comparison of Single-Agent Carboplatin vs the Combination of Carboplatin and Everolimus for the Treatment of Advanced Triple-Negative Breast Cancer</a><div class="description"><p> Conditions: <code>Breast Cancer</code></p></div></div></div><div class="item"><i class="ui large icon middle aligned">17 </i><div class="content"><a href="http://clinicaltrials.gov/ct2/show/NCT02936206" target="_blank" class="header">Examination of Breast Cancer Cells of Pre-menopausal and Post-menopausal Women Before and After Exposure to Tamoxifen or Fulvestrant.</a><div class="description"><p> Conditions: <code>Breast Cancer</code></p></div></div></div><div class="item"><i class="ui large icon middle aligned">18 </i><div class="content"><a href="http://clinicaltrials.gov/ct2/show/NCT03329378" target="_blank" class="header">Neoadjuvant Dose-Dense For Early Her2Neu Positive Breast Cancer</a><div class="description"><p> Conditions: <code>Locally Advanced Breast Cancer</code></p></div></div></div><div class="item"><i class="ui large icon middle aligned">19 </i><div class="content"><a href="http://clinicaltrials.gov/ct2/show/NCT04216576" target="_blank" class="header">A Study of the Use of Text Message Reminders to Take Palbociclib</a><div class="description"><p> Conditions: <code>Breast Cancer</code></p></div></div></div><div class="item"><i class="ui large icon middle aligned">20 </i><div class="content"><a href="http://clinicaltrials.gov/ct2/show/NCT02276885" target="_blank" class="header">Prone Partial Breast Irradiation (PBI): a Prospective Randomized Trial</a><div class="description"><p> Conditions: <code>Breast Cancer</code></p></div></div></div></div>
+        <div class="ui right menu secondary stackable container">
+            <a id="rprev" class="icon item"><i class="left chevron icon"></i> Previous Page </a>
+            <a id="rshow" class="item"> Showing (<span id="sfirst">1</span> - <span id="slast">20</span> )</a>
+            <a id="rnext" class="icon item"> Next Page <i class="right chevron icon"></i></a>
+        </div>
+    </div>
+</div>
+
+<div id="filter_results_container" class="ui container" style="display: none">
+    <h2 id="filter_results_summary" class="ui dividing header">
+        <div class="ui ignored warning message fluid">You are still eligible for <code id="filter_n"></code> trials for
+            <a id="filter_tag_name" class="ui big label orange"></a>
+        </div>
+        <div class="ui ignored negative negative fluid" style="display:none" id="qfilt_warning_3">You are not eligible
+            for any trials. Try navigation to go back to previous found trials.
+        </div>
+        <div class="ui ignored negative negative fluid" style="display:none" id="qfilt_warning_4">No more eligibility
+            questions. Please review the results.
+        </div>
+    </h2>
+    <div class="ui primary ignored button center massive fluid toggle blue" id="show_trials" show="yes"><i class="icon user"></i> Show Eligible Trials </div>
+    <div class="ui container" id="filter_results" style="display: none">
+        <div class="ui relaxed divided list"></div>
+        <div class="ui right menu secondary stackable container">
+            <a id="fprev" class="icon item"><i class="left chevron icon"></i> Previous Page </a>
+            <a id="fshow" class="item"> Showing (<span id="ffirst"></span> - <span id="flast"></span>) </a>
+            <a id="fnext" class="icon item"> Next Page <i class="right chevron icon"></i></a>
+        </div>
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+</div>
+
+<div class="footer ui inverted vertical segment form-page">
+    <div class="ui center aligned container">Columbia University
+        © 2018. All Rights Reserved</div>
+</div>
+
+
+<div class="ui dimmer modals page"><div class="ui tiny modal" id="close_modal" style="position: fixed; top: 30%;">
+    <div class="header">
+        Exit Questionnaire
+    </div>
+    <div class="content">
+        <p> You will exit back out to the original list of trials returned by the search of ClinicalTrials.gov. Do you
+            wish to continue? </p>
+    </div>
+    <div class="actions">
+        <div class="ui negative button">
+            No
+        </div>
+        <div class="ui positive right labeled icon button" id="confirm_close_question">
+            Yes
+            <i class="checkmark icon"></i>
+        </div>
+    </div>
+</div></div></body></html>

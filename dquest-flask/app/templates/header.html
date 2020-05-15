@@ -1,0 +1,279 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html lang="en" dir="ltr">
+<body>
+<head>
+    <title>COVID-19 Trial Finder</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="" />
+    <meta name="keywords" content="clinical trials, eligibility criteria, search, dquest, covid-19, coronavirus" />
+    <meta name="robots" content="all, index, follow" />
+    <meta name="googlebot" content="all, index, follow" /><!-- GOOGLE -->
+    <meta name="msnbot" content="all, index, follow" /><!-- MSN -->
+    <meta name="slurp" content="all, index, follow" /><!-- YAHOO -->
+    <meta name="copyright" content="columbia university" />
+    <meta name="author" content="Cong Liu, Chi Yuan, Yingcheng Sun, Alex Butler, Chunhua Weng">
+
+    <!-- adding favicon for browser -->
+    <link rel="shortcut icon" href="data:{{ url_for('static', filename='img/favicon_ico/favicon.ico')}}" type="image/x-icon">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='img/favicon_ico/apple-touch-icon.png')}}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='img/favicon_ico/favicon-32x32.png')}}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='img/favicon_ico/favicon-16x16.png')}}">
+    <link rel="manifest" href="{{ url_for('static', filename='img/favicon_ico/site.webmanifest')}}">
+
+    <!-- style -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui-calendar/0.0.8/calendar.min.css">
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+
+    <!-- javascript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery.blockUI/2.70/jquery.blockUI.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui-calendar/0.0.8/calendar.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+    <!--<script type="text/javascript" src="../static/js/scripts.js"></script>-->
+    <script src="{{ url_for('static', filename="js/scripts.js")}}"></script>
+
+	<script type=text/javascript> $SCRIPT_ROOT={{ request.script_root|tojson|safe }} ; </script> <style type="text/css">
+html, body {
+    height: 100%;
+    margin: 0;
+    font-size: 16px;
+   /* background: #ecf0f6; */
+    background: #ecf0f6;
+}
+dd {
+ margin-left:0px;
+}
+h4 {
+ margin:0px;
+}
+.ui container {
+    background: white;
+}
+.content-outside {
+  min-height: 100%;
+}
+.content-inside {
+  padding: 20px;
+  padding-bottom: 50px;
+}
+.footer {
+  height: 50px;
+  margin-top: -50px;
+}
+.field_columns {
+  float: left;
+  width: 50%;
+  padding: 10px;
+}
+.field_box:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+.field_type {
+    padding:10px;
+}
+
+#mq_trial_count {
+    font-size:26px;
+}
+
+#search_button {
+  background: #042467;
+}
+
+#show_trials {
+  background: #042467;
+}
+
+#qfilt {
+  background: #042467;
+}
+
+.trial_listing_group {
+    font-family:sans-serif;
+}
+
+.trial_listing_header {
+    font-size:16px;
+}
+
+.trial_listing_description {
+    font-size:14px;
+}
+.collapseSpan {
+  font-weight:bold;
+  cursor:pointer;
+}
+.collapseContainer {
+    width:100%;
+    border:1px solid #d3d3d3;
+}
+.collapseContainer div {
+    width:100%;
+}
+.collapseContainer .collapseHeader {
+     background-color:#d3d3d3;
+    /*background-color:#fff;*/
+
+    padding: 5px;
+    cursor: pointer;
+}
+.collapseContainer .collapseContent {
+    display: none;
+    padding : 10px;
+}
+.collapseContent {
+  font-weight: normal;
+}
+
+@media screen and (max-width: 600px) {
+  .field_columns {
+    width: 100%;
+  }
+}
+
+/* The Modal (background) */
+.modal {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  padding-top: 100px; /* Location of the box */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+    border: 1px solid #888;
+    border-radius:5px;
+}
+
+/* Modal Content */
+.modal-content {
+  background-color: #fefefe;
+  margin: auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%;
+  max-height: calc(100vh - 210px);
+  overflow-y: auto;
+}
+
+.homepage-modal-content {
+  background-color: #fefefe;
+    border-radius: 5px;
+  margin: auto;
+  padding: 20px;
+  border: 1px solid #888;
+    overflow: auto; /* Enable scroll if needed */
+  max-height: calc(100vh - 210px);
+    max-width: 40%;
+    vertical-align: middle;
+    position:relative;
+    float: left;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.zero-trial-modal-content {
+  background-color: #fefefe;
+    border-radius: 5px;
+  margin: auto;
+  padding: 20px;
+  border: 1px solid #888;
+  max-height: calc(100vh - 210px);
+    max-width: 40%;
+    vertical-align: middle;
+    position:fixed;
+    float: left;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+    -webkit-font-smoothing: antialiased;
+}
+
+.close-quest-modal-content {
+    background-color: #fefefe;
+    border-radius: 5px;
+    margin: auto;
+    padding: 20px;
+    border: 1px solid #888;
+    max-height: calc(100vh - 210px);
+    max-width: 40%;
+    vertical-align: middle;
+    position:fixed;
+    float: left;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    -webkit-font-smoothing: antialiased;
+}
+
+/* The Close Button */
+.close {
+  color: #aaaaaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: #000;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.location_item {
+  margin-bottom:0px;
+}
+
+ul {
+    list-style-type: none;
+}
+.row {
+  padding:10px;
+}
+dt {
+    font-weight:bold;
+}
+.modal_ctgov_link {
+    color:blue;
+    text-decoration:underline;
+}
+.homepage_logo {
+    width:60%;
+    top:0;
+    left:0;
+    right:0;
+    bottom:0;
+    margin:auto;
+}
+.homepage_acknow {
+    width:80%;
+    top:0;
+    left:0;
+    right:0;
+    bottom:0;
+    margin:auto;
+}
+#skip_mq_button {
+    margin: 0px;
+    line-height:1.2;
+    text-align:center;
+}
+    </style> 
+</head> 
+
+    {% block base %}{% endblock %}
+</body>
+</html>
