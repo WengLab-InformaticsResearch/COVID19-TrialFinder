@@ -17,7 +17,6 @@ def get_initial_nct(txt):
     url = 'http://clinicaltrials.gov/search?cond=%s&displayxml=true' % txt
     return get_initial_nct_from_url(url)
 
-
 def get_initial_nct_detail(recrs, cond, locn):
     recrs = of.format_search_terms(recrs)
     cond = of.format_search_terms(cond)
@@ -84,7 +83,6 @@ def get_nct_list_from_zip(input_zip, mile_range=50):
     for item in nearby_nct_list:
         temp_return_list.append('%s;%d' % (item, i))
         i += 1
-    print(len(temp_return_list))
     return temp_return_list
 
 # function to retrieve trials which have user-submitted keyword
@@ -94,7 +92,7 @@ def get_nct_list_from_keywords(keyword_string):
 
     # create dynamic string to handle keyword search in sql
     key_search = ""
-    if len(keyword_list) > 0:
+    if len(keyword_list) > 0 and keyword_list[0] != '':
         key_search = "where "
         for item in [x.lower() for x in keyword_list]:
             key_search = key_search + "(lower(condition_names) like '%" + item + "%' or "
@@ -156,95 +154,95 @@ def query_trial_info_for_modal(nct_id):
 
 
 # global ctgov search from url
-# @cache.memoize(604800)
-def get_initial_nct_from_url(url):
+@cache.memoize(604800)
+def get_initial_nct_from_url (url):
     # num. of studies available
     n = get_nct_number('%s&count=0' % url)
     print('num. of studies available ', n)
     if n == 0:
         return []
     # get the list of clinical studies
-    xmltree = ElementTree.fromstring(download_web_data('%s&count=%d' % (url, n)))
-    lnct = xmltree.findall('clinical_study')
+    xmltree = ElementTree.fromstring (download_web_data('%s&count=%d' % (url, n)))
+    lnct = xmltree.findall ('clinical_study')
     rnct = []
     i = 1
     for ct in lnct:
-        ids = ct.find('nct_id')
+        ids = ct.find ('nct_id')
         if ids is None:
             continue
-        rnct.append('%s;%d' % (ids.text, i))
+        rnct.append ('%s;%d' % (ids.text,i))
         i += 1
     print(rnct)
     return rnct
 
 
 # get result number
-def get_nct_number(url):
+def get_nct_number (url):
     xml = download_web_data(url)
     if xml is None:
         return 0
-    xmltree = ElementTree.fromstring(xml)
-    nnct = xmltree.get('count')
+    xmltree = ElementTree.fromstring (xml)
+    nnct = xmltree.get ('count')
     return int(nnct)
 
 
 # parse clinical trial details
-def parse_xml_nct(ct):
-    ids = ct.find('nct_id')
+def parse_xml_nct (ct):
+    ids = ct.find ('nct_id')
     if ids is None:
         return ids
     ids = ids.text
-    rank = ct.find('order')
+    rank = ct.find ('order')
     if rank is not None:
         rank = rank.text
-    title = ct.find('title')
+    title = ct.find ('title')
     if title is not None:
         title = title.text
-    condition = ct.find('condition_summary')
+    condition = ct.find ('condition_summary')
     if condition is not None:
         condition = condition.text
     return (ids, rank, title, condition)
 
 
 # ctgov search
-def search(txt, npag):
-    txt = of.format_search_terms(txt)
+def search (txt, npag):
+    txt = of.format_search_terms (txt)
     url = 'http://clinicaltrials.gov/search?cond=%s&displayxml=true' % txt
-    return retrieve_trials(url, npag)
+    return retrieve_trials (url, npag)
 
 
 # ctgov advanced search
 def advanced_search(param):
-    url = form_advanced_search_url(param)
-    return retrieve_trials(url, param.get('npag'))
+    url = form_advanced_search_url (param)
+    return retrieve_trials (url, param.get('npag'))
 
 
 # get advanced search url
-def form_advanced_search_url(param):
+def form_advanced_search_url (param):
     ctg_param = ''
     for r in sorted(param):
-        k = urllib.quote(r, '')
+        k = urllib.quote(r,'')
         if k == 'qlabel':
             continue
         for v in param.getlist(r):
             ctg_param += "%s=%s&" % (k, urllib.quote(v, ''))
     return 'http://clinicaltrials.gov/ct2/results?%sdisplayxml=True' % ctg_param
-
+    
 
 # get the list of resulting clinical trials
-def retrieve_trials(url, npag):
+def retrieve_trials (url, npag):
     # num. of studies available
     n = of.format_nct_number(get_nct_number('%s&count=0' % url))
     # get the list of clinical studies
     xml = download_web_data('%s&pg=%s' % (url, npag))
     if xml is None:
         return (0, [])
-    xmltree = ElementTree.fromstring(xml)
-    lnct = xmltree.findall('clinical_study')
+    xmltree = ElementTree.fromstring (xml)
+    lnct = xmltree.findall ('clinical_study')
     nct = []
     for ct in lnct:
-        pct = parse_xml_nct(ct)
+        pct = parse_xml_nct (ct)
         if pct[0] is not None:
-            cond = of.format_condition(pct[3])
-            nct.append((pct[0], pct[1], pct[2], cond))
+            cond = of.format_condition (pct[3])
+            nct.append ((pct[0], pct[1], pct[2], cond))
     return (n, nct)

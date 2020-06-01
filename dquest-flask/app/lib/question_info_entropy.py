@@ -1,4 +1,4 @@
-from app import general_pool_criteria, general_pool_aact
+from app import general_pool_criteria,general_pool_aact
 
 
 def filter_nct_ids_by_pre_questions(answer_list):
@@ -48,20 +48,20 @@ def filter_nct_ids_by_pre_questions(answer_list):
                         else 0 
                 end) 
             and
-                (1= case 
+                (1= case
                     when '%s' = 'yes' and (keyc.is_hospitalized = 1 or keyc.is_hospitalized is null) then 1
                     when '%s' = 'no' and (keyc.is_hospitalized = 0 or keyc.is_hospitalized is null) then 1
                     when '%s' = 'idk' and (keyc.is_hospitalized in (1, 0) or keyc.is_hospitalized is null) then 1
                         else 0
                 end)
-            and 
+            and
                 (1= case
                     when '%s' = 'yes' and (keyc.preg_status = 1 or keyc.preg_status is null) then 1
                     when ('%s' = 'no' or '%s' = 'n/a') and (keyc.preg_status = 0 or keyc.preg_status is null) then 1
                     when '%s' = 'idk' and (keyc.preg_status in (1, 0) or keyc.preg_status is null) then 1
-                        else 0 
+                        else 0
                     end)
-            and(
+             and(
                 1= case
                     when ('%s' = 'None'  or '%s' = '') then 1
                     when '%s' <> 'None' and
@@ -87,14 +87,18 @@ def filter_nct_ids_by_pre_questions(answer_list):
     return result_ids
 
 
-def find_active_nct_id_list(trial_type='all', active_restriction=True):
+def find_active_nct_id_list(active_restriction, trial_type='all'):
     '''
         find annotated working nct id list which is actively recruiting
         :param: none
         :return: a working nct id list in our annotation list
     '''
     # creating set of trial statuses based on user entry
-    if active_restriction == True:
+    if active_restriction == 'true':
+        active_restriction = True
+    else:
+        active_restriction = False
+    if active_restriction:
         status_terms = ",".join(str("'" + x + "'") for x in ['Recruiting', 'Enrolling by Invitation', 'Available'])
     else:
         status_terms = 'select distinct status from dbo.aact_trial_info'
@@ -128,14 +132,13 @@ def find_active_nct_id_list(trial_type='all', active_restriction=True):
             where [value] in (select nct_id
                             from dbo.aact_trial_info
                             where status in (%s) and 
-                            study_type in (%s))
+                            lower(study_type) in (%s))
             order by nct_id_desc;
                 ''' % (status_terms, type_search_terms)
     cur.execute(sql)
     nctids = cur.fetchall()
     conn.close()
     cur.close()
-    print('nct ids: ' + str(nctids))
 
     if len(nctids) > 0:
         for nctid in nctids:
@@ -150,18 +153,15 @@ def init_working_nct_id_list(rnct, pre_quest_answers=[]):
     :param rnct: returned from ctgov search results [...,'NCT02733523;3431','NCT02075840;3432',...]
     :return: a working nct id list
     '''
-    print('init_working_list: ' + str(rnct))
     working_nct_id_list = []
     if len(pre_quest_answers) > 0:
         filtered_nct_list = filter_nct_ids_by_pre_questions(pre_quest_answers)
-        print('in annotated: ', filtered_nct_list)
 
         for record in rnct:
             if [record[1], record[2]] in filtered_nct_list:
                 working_nct_id_list.append([record[0], record[1], int(record[2]), 0])
     else:
         working_nct_id_list = [[record[0], record[1], int(record[2]), 0] for record in rnct]
-    print('initial working list len: ', len(working_nct_id_list))
     return working_nct_id_list
 
 
@@ -180,7 +180,6 @@ def find_new_question(question_answer_list, working_nct_id_list, domain='all'):
     question_answer_list = [{'answer': {}, 'question': (3, u'pregnant')}]
     '''
     # working_nct_id_frame = pd.DataFrame(working_nct_id_list,columns=['nct_id', 'ctgov_rank', 'num_of_question'])
-    print('finding new question: ' + str(working_nct_id_list))
     working_nct_id_0 = [record[0] for record in working_nct_id_list if record[3] == 0]
 
     working_nct_id_0_len = len(working_nct_id_0)
@@ -295,7 +294,6 @@ def find_new_question(question_answer_list, working_nct_id_list, domain='all'):
                     GROUP BY concept_name, domain, include
                     ORDER BY sum(X.PlogP) DESC
                 ''' % (working_nct_id_0_len, working_nct_id_0_len, table_name, placeholders1, placeholders2)
-        print(sql)
         cur.execute(sql)
         next_concept = cur.fetchall()
         conn.close()
@@ -348,7 +346,6 @@ def find_nct_details(working_nct_id_list, npag):
         details = cur.fetchall()
         conn.close()
         cur.close()
-
         # join condition
         nct_id_condition = {}
         nct_id_title = {}
@@ -366,7 +363,6 @@ def find_nct_details(working_nct_id_list, npag):
         nct_details_for_this_page = sorted(nct_details_for_this_page, key=lambda x: x[1], reverse=False)
     return nct_details_for_this_page
 
-
 def find_size_of_active_trials(working_nct_id_list):
     '''
     find size of the remaining trials
@@ -377,7 +373,6 @@ def find_size_of_active_trials(working_nct_id_list):
     working_nct_id_0 = [record[1] for record in working_nct_id_list if record[3] == 0]
     size = len(list(set(working_nct_id_0)))
     return size
-
 
 # working_nct_id_list = [['NCT02901717', 3431, 0], ['NCT01287182', 3432, 0],['NCT01035944', 3432, 0],['NCT00562068', 3431, 1], ['NCT00742300', 3431, 2]]
 # question_answer_list = [{'answer':{'include':'EXC'},'question': {'domain': 'condition', 'entity_text': 'pregnant'}} ]
@@ -474,7 +469,6 @@ def update_working_nct_id_list(question_answer_list, working_nct_id_list):
                     select top(0) nct_id_original from %s
                 ''' % (table_name)
 
-        print(sql)
         conn = general_pool_criteria.connection()
         cur = conn.cursor()
         cur.execute(sql)

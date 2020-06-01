@@ -29,6 +29,8 @@ function pre_questions_search(){
     return result;
 }
 
+
+
 function search(tsearch) {
     if (tsearch == 'advanced') {
         var form_args = $(adv_search).serializeArray();
@@ -182,7 +184,6 @@ function result_content(nct_details_for_this_page) {
         sout += '<div class="trial_listing_description"><p> Conditions: <code style="font-family: sans-serif;">' + nct[k][3] + '</code></p></div>';
         sout += '</div></div>';
     }
-
     return sout
 }
 
@@ -306,7 +307,6 @@ function q_visualization(question_answer_list, working_nct_id_list) {
     sout += '</div>'
     $('#question_number').html(sout);
 
-    console.log(q.domain);
     $("#domain_cond").attr('disabled', true)
 
     include_has = "<select class='ui fluid dropdown' name  = 'include' id = 'include'  ><option value='NULL' selected>I don't know/I don't want to answer</option><option value='EXC'>No</option><option value='INC'>Yes</option>"
@@ -325,7 +325,7 @@ function q_visualization(question_answer_list, working_nct_id_list) {
 	//create a new one to cover the fake one
         $('#include').html(include_has);
 	$('#domain').html(domain_has);
-
+        
         if (q.domain.toLowerCase() == 'condition') {
             x = '<div class="ui pink horizontal label">Medical History</div>'
             sout = 'Have you ever been diagnosed with: ' + q.entity_text + x + '?';
@@ -1030,9 +1030,6 @@ $(document).ready(function () {
             let trial_type = $('#trial_type').val();
             let active_restriction = $('#active_trial_restriction').is(':checked');
             let keyword_search = $('#keyword_search_terms').val();
-            console.log('input location: ' + input_locn);
-            console.log('input mile range: ' + input_range);
-            console.log('input keyword: ' + keyword_search);
 
             var vz = false;
             $.getJSON($SCRIPT_ROOT + '/_check_homepage_parameters', {
@@ -1181,7 +1178,6 @@ $(document).ready(function () {
     // });
 
     $("#close_question").click(function () {
-        console.log('catching click on close question')
         let modal = document.getElementById("close_modal_qform");
         modal.style.display = "block";
     });
@@ -1316,5 +1312,6 @@ $(document).ready(function () {
 
         $('#qfilt').click();
     });
+
 });
 $(document).ajaxStop($.unblockUI);
