@@ -135,6 +135,7 @@ def find_active_nct_id_list(active_restriction, trial_type='all'):
                             lower(study_type) in (%s))
             order by nct_id_desc;
                 ''' % (status_terms, type_search_terms)
+
     cur.execute(sql)
     nctids = cur.fetchall()
     conn.close()
@@ -362,6 +363,107 @@ def find_nct_details(working_nct_id_list, npag):
                                      nct_id in nct_id_condition.keys()]
         nct_details_for_this_page = sorted(nct_details_for_this_page, key=lambda x: x[1], reverse=False)
     return nct_details_for_this_page
+
+# fengyang: find all locations on current page
+import ctgov as ctgov
+def find_all_locations_on_current_page(working_nct_id_list, npag):
+    '''
+        find nct locations on current page by connecting to knowledgebase
+        :param working_nct_id_list:
+        :param npag: page number of result to return
+        :return: this_page_loc_flat_list is a list of location latlng dict [{'lat':, 'lng': }, ...]
+        nct_id_this_page_list is a list of nct_id corresponding to the location in this_page_loc_flat_list
+        '''
+    this_page_loc_flat_list = []
+
+    working_nct_id_0 = [(record[1], record[2]) for record in working_nct_id_list if record[3] == 0]
+    srt_working_nct_id_0 = sorted(working_nct_id_0, key=lambda x: x[1], reverse=False)
+    start_idx = (npag - 1) * 20
+    end_idx = min(len(srt_working_nct_id_0), npag * 20)
+    nct_id_this_page = [srt[0] for srt in srt_working_nct_id_0[start_idx:end_idx]]
+    nct_id_this_page = list(set(nct_id_this_page))
+    nct_id_rank = {}
+    for srt in srt_working_nct_id_0[start_idx:end_idx]:
+        nct_id_rank[srt[0]] = srt[1]
+
+    if len(nct_id_this_page) == 0:
+        this_page_loc_flat_list = []
+        nct_id_this_page_list = []
+    else:
+        nct_id_this_page = [str(x) for x in nct_id_this_page]
+
+        this_page_loc_latlng_list = []
+        nct_id_this_page_list = []
+        for nct_id in nct_id_this_page:
+            trial_loc_latlng_list = ctgov.get_nct_location_latlng(nct_id)
+            this_page_loc_latlng_list.append(trial_loc_latlng_list)
+            nct_id_this_page_list = nct_id_this_page_list + [nct_id]*len(trial_loc_latlng_list)
+
+        # flat list of lists into one single list
+        this_page_loc_flat_list = [item for sublist in this_page_loc_latlng_list for item in sublist]
+
+    return [this_page_loc_flat_list, nct_id_this_page_list]
+
+# fengyang: functions to find all location within search range
+from math import radians, cos, sin, asin, sqrt
+import numpy as np
+
+def haversine(lon1, lat1, lon2, lat2):
+    """
+    Calculate the great circle distance between two points
+    on the earth (specified in decimal degrees)
+    """
+    # convert decimal degrees to radians
+    lon1, lat1, lon2, lat2 = map(radians, [lon1, lat1, lon2, lat2])
+
+    # haversine formula
+    dlon = lon2 - lon1
+    dlat = lat2 - lat1
+    a = sin(dlat/2)**2 + cos(lat1) * cos(lat2) * sin(dlon/2)**2
+    c = 2 * asin(sqrt(a))
+    # r = 6371 # Radius of earth in kilometers. Use 3956 for miles
+    r = 3956
+    return c * r
+
+def find_nct_loc_within_range(loc_latlng_list, nct_id_list, input_zipcode_latlng, input_miles):
+    '''
+    :param loc_latlng_list: [{'lat': , 'lon': }]
+    :param input_zipcode_latlng: {'lat': , 'lon': }
+    :param input_miles: number
+    :return:
+    '''
+    lat1 = input_zipcode_latlng['lat']
+    lng1 = input_zipcode_latlng['lng']
+    # allow distance error +3
+    distance_list = [haversine(lng1, lat1, loc['lng'], loc['lat'])+3 if loc is not None else 999999
+                     for loc in loc_latlng_list]
+    filter_index = np.where(np.array(distance_list) <= input_miles)[0]
+    # loc_within_range = np.array(loc_latlng_list)[np.where(np.array(distance_list) <= input_miles)[0]]
+    loc_within_range = np.array(loc_latlng_list)[filter_index]
+    loc_within_range = list(loc_within_range)
+    nct_within_range = np.array(nct_id_list)[filter_index]
+    nct_within_range = list(nct_within_range)
+
+    # get trial title
+    conn = general_pool_criteria.connection()
+    cur = conn.cursor()
+    sql = '''
+            select nct_id, official_title
+            from dbo.aact_trial_info
+            '''
+    cur.execute(sql)
+    trial_title = cur.fetchall()
+    conn.close()
+    cur.close()
+    nct_id_title = {}
+    if len(trial_title) > 0:
+        for r in trial_title:
+            if len(r) >=2:
+                nct_id_title[r[0]] = r[1]
+    nct_title_within_range = [nct_id_title[nct_id] for nct_id in nct_within_range]
+
+    return [loc_within_range, nct_within_range, nct_title_within_range]
+# fengyang end
 
 def find_size_of_active_trials(working_nct_id_list):
     '''

@@ -26,10 +26,12 @@
 </div>
 
 <!-- The Modal -->
-            <div id="myModal" class="modal">
+<!-- fengyang myModal block comment-->
+        <!--<div id="myModal" class="modal">
 
-              <!-- Modal content -->
-              <div class="modal-content">
+              &lt;!&ndash; Modal content &ndash;&gt;
+              &lt;!&ndash; <div class="modal-content"> fengyang&ndash;&gt;
+              <div class="modal-content2">
                 <span class="close">&times;</span>
                 <h4>
                   Official Title
@@ -138,7 +140,7 @@
 
 
               </div>
-            </div>
+            </div>-->
 
 <div id="filter_results_container" class='ui container' style='display: none'>
     <h2 id="filter_results_summary" class='ui dividing header'>
@@ -153,15 +155,153 @@
     </h2>
     <div class="collapseContainer" style="border-radius:6px;">
     <div class="ui primary ignored button center massive fluid toggle blue" id="show_trials" show='no'><i
-            class="icon user"></i> Hide Eligible Trials </div>
+            class="icon user"></i> Hide Eligible Trials</div>
+        <!--fengyang change style-->
+        <div class="ui grid two compact segments horizontal">
+        <div class="ui segment six wide column" id='filter_results' style='display: none; background: white'>
 
-        <div class="collapseContent" id='filter_results' style='display: none; background: white;'>
-            <div class="ui relaxed divided list"></div>
+            <div class="ui relaxed divided list" style="overflow:auto;"></div>
             <div class="ui right menu secondary stackable container">
                 <a id="fprev" class="icon item"><i class="left chevron icon"></i> Previous Page </a>
                 <a id="fshow" class="item"> Showing (<span id='ffirst'></span> - <span id='flast'></span>) </a>
                 <a id="fnext" class="icon item"> Next Page <i class="right chevron icon"></i></a>
             </div>
         </div>
+        <div class="ui segment ten wide column" style="overflow:auto;">
+            <div class="ui top attached label">Map</div> <!--fengyang: change title-->
+            <div id="floating-panel">
+              <input id="address" type="textbox" value="New York, NY">
+              <input id="submit" type="button" value="Search">
+            </div>
+            <!--fengyang add map: please change API key later-->
+            <script async defer
+            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAfGrfnJVQH1V0hU3sBKxgydYMH107Jx2M&callback=initMap&language=EN">
+            </script>
+            <div id="map"></div>
+            <div class="ui container" id="go_back_container" >
+                <div class="field">
+                    <div class="ui container" style="font-size:14px;">
+                        <!--<h4> Detailed trial info </h4>--> <!--fengyang-->
+                        <div class="ui top attached label">Detailed trial info</div>
+                        <div class="ui divided selection list" id="question_tags">
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-content2">
+                <span class="close">&times;</span>
+                <h4>
+                  Official Title
+                </h4>
+                <p class="modal_p" id="modal_official_title">
+                  No information available in ClinicalTrials.gov
+                </p>
+                <h4>
+                  NCT ID Number
+                </h4>
+                <p class="modal_p" id="modal_nct_id">
+                  No information available in ClinicalTrials.gov
+                </p>
+                <h4>
+                  Study Type
+                </h4>
+                <p class="modal_p" id="modal_study_type">
+                  No information available in ClinicalTrials.gov
+                </p>
+                <h4>
+                  Primary Purpose
+                </h4>
+                <p class="modal_p" id="modal_primary_purpose">
+                  No information available in ClinicalTrials.gov
+                </p>
+                <h4>
+                  Study Description
+                </h4>
+                <p class="modal_p" id="modal_study_description">
+                  No information available in ClinicalTrials.gov
+                </p>
+
+                <div id="tabs">
+                  <ul>
+                    <li><a href="#tabs-el">Eligibility</a></li>
+                    <li><a href="#tabs-sd">Study Design</a></li>
+                    <li><a href="#tabs-lo">Contacts and Locations</a></li>
+                    <li><a href="#tabs-ai">Additional Info</a></li>
+                  </ul>
+                  <div id="tabs-el">
+                    <dl class-="dl-horizontal">
+                      <dt>Patient Gender</dt>
+                      <dd id="modal_gender">
+                        No information available in ClinicalTrials.gov
+                      </dd>
+                      <dt>Minimum Age</dt>
+                      <dd id="modal_min_age">
+                        There is no minimum age!
+                      </dd>
+                      <dt>Maximum Age</dt>
+                      <dd id="modal_max_age">
+                        There is no maximum age!
+                      </dd>
+                      <dt>Allows Participants Who Are COVID-negative</dt>
+                      <dd id="modal_healthy_volunteers">
+                        No information available in ClinicalTrials.gov
+                      </dd>
+                    </dl>
+                  </div>
+                  <div id="tabs-sd">
+                    <dl class-="dl-horizontal">
+                      <dt id="modal_intervention_title">Target Intervention</dt>
+                      <dd id="modal_intervention">
+                        No information available in ClinicalTrials.gov
+                      </dd>
+                      <dt>Study Phase</dt>
+                      <dd id="modal_phase">
+                        No information available in ClinicalTrials.gov
+                      </dd>
+                      <dt id="modal_allocation_title">Allocation</dt>
+                      <dd id="modal_allocation">
+                        No information available in ClinicalTrials.gov
+                      </dd>
+                      <dt id="modal_int_obs_model_title">Intervention Model</dt>
+                      <dd id="modal_int_obs_model_description">
+                        No information available in ClinicalTrials.gov
+                      </dd>
+                      <dt id="modal_masking_title">Masking</dt>
+                      <dd id="modal_masking">
+                        No information available in ClinicalTrials.gov
+                      </dd>
+                      <dt>Primary Outcome Measure</dt>
+                      <dd id="modal_primary_outcome_measure">
+                        No information available in ClinicalTrials.gov
+                      </dd>
+                      <dt>Primary Outcome Description</dt>
+                      <dd id="modal_primary_outcome_description">
+                        No information available in ClinicalTrials.gov
+                      </dd>
+                    </dl>
+                  </div>
+                  <div id="tabs-lo">
+                    <strong>Central Contact Information</strong>
+                    <ul style="padding-left:0;">
+                        <li id="modal_cc_name">Contact Name: No information available in ClinicalTrials.gov</li>
+                        <li id="modal_cc_phone">Contact Phone: No information available in ClinicalTrials.gov</li>
+                        <li id="modal_cc_email">Contact Email: No information available in ClinicalTrials.gov</li>
+                    </ul>
+                  </div>
+                  <div id="tabs-ai">
+                    <a href="https://clinicaltrials.gov" id="modal_ctgov_link" class="modal_ctgov_link" target="_blank">
+                        Click HERE to see additional trial information on ClinicalTrials.gov</a>
+                  </div>
+                </div>
+
+
+
+              </div>
+            <!-- fengyang -->
+
+        </div>
+    </div>
+
     </div>
 </div>
