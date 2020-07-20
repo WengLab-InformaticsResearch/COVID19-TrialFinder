@@ -5,7 +5,7 @@ import lib.oformat as of
 import lib.ctgov as ctgov
 import lib.question_info_entropy as qst
 
-log = logger('dquest-view')
+# log = logger('dquest-view')
 
 # home page
 @app.route('/')
@@ -104,11 +104,14 @@ def check_homepage_parameters():
 
     # trying zipcode search
     try:
-        nearby_nct = ctgov.get_nct_list_from_zip(locn, miles)
+        # fengyang: after change the output of get_nct_list_from_zip function
+        nearby_nct = ctgov.get_nct_list_from_zip(locn, miles)[0]
         print('length of nearby nct: ' + str(len(nearby_nct)))
         # session['nearby_nct_list'] = nearby_nct
         valid_zip = True
         print('assigned new variable')
+        # fengyang: return nearby zip list
+        nearby_zip_list = ctgov.get_nct_list_from_zip(locn, miles)[1]
 
     except:
         nearby_nct = []
@@ -124,7 +127,8 @@ def check_homepage_parameters():
     # session['keyword_trial_list'] = klist
 
     # testing additional trial information pull using active restriction and trial type
-    tlist = qst.find_active_nct_id_list(trial_type, active_restriction)
+    # tlist = qst.find_active_nct_id_list(trial_type, active_restriction)
+    tlist = qst.find_active_nct_id_list(active_restriction, trial_type)
     # session['trial_type_list'] = tlist
 
     # building working nct_id list from search parameters
@@ -146,8 +150,9 @@ def check_homepage_parameters():
     print(len(tlist))
     print(len(zanct))
 
+    # fengyang: add nearby_zip_list at return output
     return jsonify(valid_zip=valid_zip, nearby_length=len(nearby_nct), keyword_length=len(klist), type_length=len(tlist),
-                   working_nct_length=len(zanct))
+                   working_nct_length=len(zanct), nearby_zip_list = nearby_zip_list)
 
 # function to query aact_trial_info table and return data for trial information modal
 @app.route('/_retrieve_modal_data')
@@ -170,12 +175,18 @@ def retrieve_modal_data():
     if trial_data[17] is not None:
         cc = (trial_data[17].split('; '))
 
+    # fengyang: add location latlng info
+    trial_loc_latlng_list = ctgov.get_nct_location_latlng(nct_id)
+    # if nct_id is not in the pickle file, will return an empty list []
+
     return jsonify(official_title=trial_data[0], study_type=trial_data[1], primary_purpose=trial_data[2],
                    study_description=trial_data[3], gender=trial_data[4], minimum_age=trial_data[5],
                    maximum_age=trial_data[6], healthy_volunteers=trial_data[7], phase=trial_data[8],
                    allocation=trial_data[9], intervention_model=trial_data[10], observation_model=trial_data[11],
                    masking=trial_data[12], outcome_measure=trial_data[13], outcome_description=trial_data[14],
-                   facilities_and_contacts=fc, intervention_names=trial_data[16], central_contact=cc)
+                   facilities_and_contacts=fc, intervention_names=trial_data[16], central_contact=cc,
+                   # fengyang
+                   location_latlng=trial_loc_latlng_list)
 
 # start question and init working_nct_id_list and question_answer_list.
 @app.route('/_hao_start_question')
@@ -243,7 +254,7 @@ def start_question_detail():
 
     if len(working_nct_id_list) > 0:
         question_answer_list = qst.find_new_question(question_answer_list, working_nct_id_list)
-        log.info('%s -- first question' % (request.remote_addr))
+        # log.info('%s -- first question' % (request.remote_addr))
 
     return jsonify(question_answer_list=question_answer_list, working_nct_id_list=working_nct_id_list)
 
@@ -257,6 +268,8 @@ def advs_start_question():
     # session['query'] = qlabel
     # session.modified = True
     # get trials
+    print('request.args')
+    print(request.args)
     url = ctgov.form_advanced_search_url(request.args)
     rnct = ctgov.get_initial_nct_from_url(url)
     working_nct_id_list = qst.init_working_nct_id_list(rnct)
@@ -277,8 +290,26 @@ def find_nct_by_page():
     print('find_nct_by_page: ' + str(working_nct_id_list))
     size_of_active_trials = qst.find_size_of_active_trials(working_nct_id_list)
     print('size_of_active_trials: ' + str(size_of_active_trials))
+    # fengyang
+    nct_loc_for_this_page = qst.find_all_locations_on_current_page(working_nct_id_list, npag)[0]
+    nct_id_rep_for_this_page = qst.find_all_locations_on_current_page(working_nct_id_list, npag)[1]
+    # print('len_of_all_marker: '+ str(len(nct_loc_for_this_page)))
+    # nct_log_nearby
+    input_latlng = requestion_dict['input_zipcode_latlng']
+    input_miles = requestion_dict['input_miles']
+    nct_loc_nearby_for_this_page = qst.find_nct_loc_within_range(nct_loc_for_this_page, nct_id_rep_for_this_page,input_latlng, input_miles)[0]
+    nct_id_nearby_for_this_page = qst.find_nct_loc_within_range(nct_loc_for_this_page, nct_id_rep_for_this_page,input_latlng, input_miles)[1]
+    nct_title_nearby_for_this_page = \
+    qst.find_nct_loc_within_range(nct_loc_for_this_page, nct_id_rep_for_this_page, input_latlng, input_miles)[2]
+
     return jsonify(working_nct_id_list=working_nct_id_list, npag=npag,
-                   nct_details_for_this_page=nct_details_for_this_page, size_of_active_trials=size_of_active_trials)
+                   nct_details_for_this_page=nct_details_for_this_page, size_of_active_trials=size_of_active_trials,
+                   # fengyang
+                   nct_loc_for_this_page = nct_loc_for_this_page,
+                   nct_loc_nearby_for_this_page = nct_loc_nearby_for_this_page,
+                   nct_id_nearby_for_this_page = nct_id_nearby_for_this_page,
+                   nct_title_nearby_for_this_page=nct_title_nearby_for_this_page,
+                   )
 
 
 # confirm the question.

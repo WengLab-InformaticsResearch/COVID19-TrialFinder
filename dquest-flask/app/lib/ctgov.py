@@ -9,7 +9,8 @@ from pyzipcode import ZipCodeDatabase
 from extensions import cache
 import oformat as of
 import urllib
-
+import pyodbc
+import pandas as pd
 
 # global ctgov search
 def get_initial_nct(txt):
@@ -38,9 +39,9 @@ def get_initial_nct_patient(cond, locn):
 def get_nct_list_from_zip(input_zip, mile_range=50):
     zcdb = ZipCodeDatabase()
     zip_list = [z.zip for z in zcdb.get_zipcodes_around_radius(input_zip, mile_range)]  # default mile range set at 100
-
     conn = general_pool_criteria.connection()
     cur = conn.cursor()
+    # conn.execute("USE trial_knowledge_base_COVID19") ##
     sql = '''
             ;with cte (code, DeclarationItem, Declaration) as
             (
@@ -62,8 +63,8 @@ def get_nct_list_from_zip(input_zip, mile_range=50):
         '''
     cur.execute(sql)
     trial_zips = cur.fetchall()
-    conn.close()
     cur.close()
+    conn.close()
 
     # compare nearby zip codes to trial zip codes
     nearby_nct_list = []
@@ -77,13 +78,17 @@ def get_nct_list_from_zip(input_zip, mile_range=50):
             nearby_nct_list.append(
                 test_nct)  # some zip codes stored with '-xxxx' after primary 5 digit, pyzipcode no like that
     nearby_nct_list = list(set(nearby_nct_list))
+
     # temp loop to add trial number, to be removed in the future
     temp_return_list = []
     i = 1
     for item in nearby_nct_list:
         temp_return_list.append('%s;%d' % (item, i))
         i += 1
-    return temp_return_list
+
+    # return temp_return_list
+    # fengyang: also return the nearby zipcode list
+    return [temp_return_list, zip_list]
 
 # function to retrieve trials which have user-submitted keyword
 def get_nct_list_from_keywords(keyword_string):
@@ -246,3 +251,15 @@ def retrieve_trials (url, npag):
             cond = of.format_condition (pct[3])
             nct.append ((pct[0], pct[1], pct[2], cond))
     return (n, nct)
+
+# fengyang: add functions to get location latlng
+import pickle
+nct_locs_dict = pickle.load(open('../dquest-flask/app/resources/nct_latlng_dict.pkl', 'rb'))
+def get_nct_location_latlng(nct_id):
+    nct_loc_latlng = []
+    # if no valid latlng, Object.keys(nct_loc_latlng).length == 0, else 2
+    if nct_id in nct_locs_dict.keys():
+        # if loc_index <= len(nct_locs_dict[nct_id])-1:
+        nct_loc_latlng = nct_locs_dict[nct_id]
+        # [{lat: 40.8476284, lng: -73.8360251}]
+    return nct_loc_latlng

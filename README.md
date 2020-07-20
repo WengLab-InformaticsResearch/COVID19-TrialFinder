@@ -112,8 +112,8 @@ check path
 def index ():
 ```
 ## Versioning
-0.0.1
-
+0.1  
+Detailed describtion of updates are included in "development document.doc"  
 ## Authors
-Cong Liu, Chi Yuan, Yingcheng Sun, Hao Liu, Alex Butler, Chunhua Weng
+Alex Butler, Yingcheng Sun, Fengyang Lin, Hao Liu, Cong Liu, Chi Yuan, Chunhua Weng  
 amb2453@cumc.columbia.edu

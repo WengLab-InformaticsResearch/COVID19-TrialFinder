@@ -6,7 +6,7 @@ from web import download_web_data
 from log import logger
 import urllib
 
-log = logger ('dquest-oformat')
+# log = logger ('dquest-oformat')
 
 # format search terms
 def format_search_terms (txt):

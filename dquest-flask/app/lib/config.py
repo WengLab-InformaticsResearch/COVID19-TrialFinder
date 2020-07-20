@@ -1,15 +1,14 @@
-CRITERIA_HOST = ''
+CRITERIA_HOST = '0.0.0.0'
 CRITERIA_DATABASE = ''
 CRITEIRA_USERNAME = ''
 CRITERIA_PASSWORD = ''
-CRITERIA_DRIVER = '' # make sure the driver is installed on the server
+CRITERIA_DRIVER = '{ODBC Driver 17 for SQL Server}' # make sure the driver is installed on the server
 CRITERIA_PORT  = 
 
-AACT_HOST = ''
+AACT_HOST = 'aact-db.ctti-clinicaltrials.org'
 AACT_PORT = 
-AACT_DATABASE = ''
+AACT_DATABASE = 'aact'
 AACT_USERNAME = ''
 AACT_PASSWORD = ''
-
-CSRF_ENABLED = 
-SECRET_KEY = ''
+CSRF_ENABLED = True
+SECRET_KEY = 'XXX'

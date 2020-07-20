@@ -1,10 +1,10 @@
-// fengyang: map start
+// map start
 var map;
 var geocoder;
 var infowindow;
+var nct_places = ['Columbia University', 'Time Square', 'MOMA'];
 var marker_list = [];
-var input_miles_list = [];
-var input_latlng = [];
+// var marker_content_list = ['New York University', 'Time Square', 'MOMA'];
 
 function initMap() {
   map = new google.maps.Map(document.getElementById('map'), {
@@ -13,6 +13,18 @@ function initMap() {
     mapTypeControl: false
   });
   geocoder = new google.maps.Geocoder();
+  /*for (var i = 0; i < nct_places.length; i++) {
+             var PlaceAddress = nct_places[i];
+             InitgeocodeAddress(geocoder, map, PlaceAddress)
+        };
+  var myLatLng = new google.maps.LatLng(40.8412426, -73.9431593)
+  var marker = new google.maps.Marker({
+              map: map,
+              position: myLatLng
+            });*/
+  // var input_zip = $('#location_terms').val();
+  // console.log(input_zip);
+  /* add_marker_with_address(geocoder, map, input_zip.toString());*/
   infowindow = new google.maps.InfoWindow({maxWidth: 200});
   document.getElementById('submit').addEventListener('click', function() {
     geocodeAddress(geocoder, map);
@@ -36,7 +48,6 @@ function geocodeAddress(geocoder, resultsMap) {
   });
 }
 
-
 function add_marker_with_address(geocoder, resultsMap, address, info_content='', icon_url = '') {
         // <!--var address = document.getElementById('address').value;-->
         geocoder.geocode({'address': address}, function(results, status) {
@@ -51,6 +62,8 @@ function add_marker_with_address(geocoder, resultsMap, address, info_content='',
             marker.setIcon(icon_url);}
 
             // add infowindow
+            // let marker_index = marker_list.length;
+            // marker content not define yet
             marker.addListener('click', function() {
             infowindow.setContent(info_content);
             infowindow.open(resultsMap, marker);
@@ -61,127 +74,15 @@ function add_marker_with_address(geocoder, resultsMap, address, info_content='',
             console.log('Geocode was not successful for the following reason: ' + status);
           }
         });
-      }
-// have to store it in a global variable, geocode is an asynchronous call
-
-function geocode_marker_with_address(geocoder, resultsMap, address, info_content='', icon_url = '') {
-        // functions similar to geocode marker, but only for input value on the index page
-        // let latlng_dict_return = [];
-        geocoder.geocode({'address': address}, function(results, status) {
-          if (status === 'OK') {
-            resultsMap.setCenter(results[0].geometry.location);
-            // change_previous_marker_icon(marker_list);
-            let marker = new google.maps.Marker({
-              map: resultsMap,
-              position: results[0].geometry.location
-            });
-            if (icon_url != ''){
-            marker.setIcon(icon_url);}
-            marker.addListener('click', function() {
-            infowindow.setContent(info_content);
-            infowindow.open(resultsMap, marker);
-            });
-            marker_list.push(marker);
-
-            latlng_dict = {
-            'lat': results[0].geometry.location.lat(),
-            'lng': results[0].geometry.location.lng()
-            };
-            input_latlng.push(latlng_dict);
-          } else {
-            alert('Geocode was not successful for the following reason: ' + status);
-            console.log('Geocode was not successful for the following reason: ' + status);
-          }
-        });
-      }
-
-function add_marker_with_latlng(resultsMap, latlng, info_content='', icon_url = '',storeID = '',
-                                icon_size = '',
-                                list_to_push = marker_list) {
-        resultsMap.setCenter(latlng); //if setCenter or not
-        // change_previous_marker_icon(marker_list);
-        let marker = new google.maps.Marker({
-          map: resultsMap,
-          position: latlng,
-          storeId: storeID,
-        });
-        if (icon_url != ''){
-            if(icon_size != ''){
-            marker.setIcon({
-            url: icon_url,
-            scaledSize: new google.maps.Size(icon_size, icon_size)})
-            } else{
-            marker.setIcon(icon_url);
-            }
-        }
-
-        // add infowindow
-        // let marker_index = marker_list.length;
-        // marker content not define yet
-        if (info_content != ''){
-            marker.addListener('click', function() {
-            infowindow.setContent(info_content);
-            infowindow.open(resultsMap, marker);
-        });
-        }
-        list_to_push.push(marker);
-      }
-
-function add_10_markers_each_time(to_add_marker_list, to_add_info_list, time_sleep){
-        var num_add_times = Math.floor(to_add_marker_list.length/10);
-        if (to_add_marker_list.length % 10 != 0){num_add_times = num_add_times + 1};
-
-        for (let k = 0; k < num_add_times; k++) {
-               let current_marker_list = to_add_marker_list.slice(k*10, k*10+10);
-               let current_info_list = to_add_info_list.slice(k*10, k*10+10);
-               setTimeout(function(){
-                 for (let j = 0; j < current_marker_list.length; j++) {
-                 add_marker_with_address(geocoder, map, current_marker_list[j], current_info_list[j]);
-                 console.log('num_add_list_' +k +'_'+ current_marker_list.length);
-                 }},
-                 time_sleep*k)
-          }
       }
 
 function change_previous_marker_icon(exist_marker_list){
       for (var i = 0; i < exist_marker_list.length; i++) {
              let marker = exist_marker_list[i];
-             // marker.setIcon("http://maps.google.com/mapfiles/ms/icons/green-dot.png");
-             marker.setIcon({
-                url: "http://maps.google.com/mapfiles/ms/icons/lightblue.png",
-                scaledSize: new google.maps.Size(20, 20)});
+             marker.setIcon("http://maps.google.com/mapfiles/ms/icons/green-dot.png");
         }
       }
-function selectMarker(storeId, status) {
-  let i, len, marker;
-
-  // Find the correct marker to change based on the storeId.
-  for (i = 0, len = marker_list.length; i < len; i++) {
-    if (marker_list[i].storeId == storeId) {
-      marker = marker_list[i];
-      if (status == "start") {
-        marker.setIcon({
-        url:"http://maps.google.com/mapfiles/ms/icons/ltblue-dot.png"
-        });
-      } else {
-        marker.setIcon({
-        url: "http://maps.google.com/mapfiles/ms/icons/lightblue.png",
-        scaledSize: new google.maps.Size(20, 20)});
-      }
-    }
-  }
-}
-
-function clear_marker(){
-    // fengyang: clear all markers before
-    if (marker_list.length > 1){
-        marker_list.slice(1).forEach(function(marker) {
-           marker.setMap(null);
-          });
-        marker_list = marker_list.slice(0, 1);
-    }
-}
-// fengyang: map end
+// map end
 
 // add function to
 
@@ -692,15 +593,10 @@ function confirm(question_answer_list, working_nct_id_list, domain) {
     });
 }
 
-function find_search_results(working_nct_id_list, np,
-        // fengyang: add para
-        input_zipcode_latlng = input_latlng[0], input_miles = input_miles_list[0]) {
-
+function find_search_results(working_nct_id_list, np) {
     formData = {
         'working_nct_id_list': working_nct_id_list,
-        'npag': np,
-        'input_zipcode_latlng': input_zipcode_latlng,
-        'input_miles': input_miles
+        'npag': np
     }
     $.blockUI({
         message: '<div class="ui segment"><div class="ui active dimmer">Loading...<div class="ui text loader"></div></div></div>',
@@ -724,34 +620,6 @@ function find_search_results(working_nct_id_list, np,
         success: function (data) { // format query
             // sout = '<p class="recap"> Left <span class="drecap">' + data.size_of_active_trials + '</span> clinical trials for: <span id="qlabel" class="drecap">' + data.q + '<span></p>';
             show_search_results(data.working_nct_id_list, data.npag, data.nct_details_for_this_page, data.size_of_active_trials);
-            //fengyang: all markers to all location
-            let nearby_loc_latlng = data.nct_loc_nearby_for_this_page;
-            let nearby_loc_nct_id = data.nct_id_nearby_for_this_page;
-            let nearby_loc_nct_title= data.nct_title_nearby_for_this_page;
-
-            let all_loc_latlng = data.nct_loc_for_this_page;
-            if (nearby_loc_latlng.length>0){
-                //if there are latlng records in pickle
-                for (let j = 0; j < nearby_loc_latlng.length; j++){
-                    let this_marker_latlng = nearby_loc_latlng[j];
-                    let this_marker_id = nearby_loc_nct_id[j];
-                    let info_content = '<div>';
-                    info_content = info_content + '<p>' + '<strong>' + 'Official Title' +'</strong>';
-                    info_content = info_content +  '<br />'+ nearby_loc_nct_title[j] + '</p>';
-                    info_content = info_content + '<p>'+ '<strong>' + 'NCT ID Number'+'</strong>';
-                    info_content = info_content + '<br />' + this_marker_id + '</p>';
-                    info_content = info_content + '</div>';
-                    add_marker_with_latlng(map, this_marker_latlng,info_content,
-                    icon_url = 'http://maps.google.com/mapfiles/ms/icons/lightblue.png',
-                    this_marker_id, icon_size = 20,
-                    );
-                }
-                add_marker_with_latlng(map, input_zipcode_latlng, 'Your input zip code',
-                                   'http://maps.google.com/mapfiles/kml/pal4/icon57.png');
-                //add_marker_with_address(geocoder, map, '10032',
-                //                                'Your input zip code',
-                //                                'http://maps.google.com/mapfiles/kml/pal4/icon57.png');
-            }
 
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
@@ -775,11 +643,8 @@ function show_search_results(working_nct_id_list, npag, nct_details_for_this_pag
     if (np > 1) {
         $('#rprev').unbind('click');
         $('#rprev').bind('click', function () {
-            //fengyang: clear marker when page changes
-            clear_marker();
             find_search_results(working_nct_id_list, parseInt(npag) - 1);
             $(document).scrollTop(0);
-
         });
     } else {
         $('#rprev').unbind('click')
@@ -789,9 +654,6 @@ function show_search_results(working_nct_id_list, npag, nct_details_for_this_pag
     if (np + 1 <= pmax) {
         $('#rnext').unbind('click');
         $('#rnext').bind('click', function () {
-            //fengyang: clear marker when page changes
-              clear_marker();
-
             find_search_results(working_nct_id_list, parseInt(npag) + 1);
 
             $(document).scrollTop(0);
@@ -808,15 +670,10 @@ function show_search_results(working_nct_id_list, npag, nct_details_for_this_pag
 }
 // find results (similar to search)
 // function to search
-function find_results(working_nct_id_list, np,
-        input_zipcode_latlng = input_latlng[0], input_miles = input_miles_list[0]) {
-    // fengyang: should add functions to add all markers in this page
+function find_results(working_nct_id_list, np) {
     formData = {
         'working_nct_id_list': working_nct_id_list,
-        'npag': np,
-        //fengyang: add params
-        'input_zipcode_latlng': input_zipcode_latlng,
-        'input_miles': input_miles,
+        'npag': np
     }
     $.blockUI({
         message: '<div class="ui segment"><div class="ui active dimmer">Loading...<div class="ui text loader"></div></div></div>',
@@ -842,38 +699,6 @@ function find_results(working_nct_id_list, np,
             filter_n = data.size_of_active_trials
             $("#filter_n").html(filter_n);
             show_qfilter_results(data.working_nct_id_list, data.npag, data.nct_details_for_this_page, data.size_of_active_trials);
-
-            //fengyang
-            let nearby_loc_latlng = data.nct_loc_nearby_for_this_page;
-            let nearby_loc_nct_id = data.nct_id_nearby_for_this_page;
-            let nearby_loc_nct_title= data.nct_title_nearby_for_this_page;
-            console.log('num nearby location:'+nearby_loc_latlng.length);
-            let all_loc_latlng = data.nct_loc_for_this_page;
-
-            if (nearby_loc_latlng.length>0){
-                //if there are latlng records in pickle
-                for (let j = 0; j < nearby_loc_latlng.length; j++){
-                    let this_marker_latlng = nearby_loc_latlng[j];
-                    let this_marker_id = nearby_loc_nct_id[j];
-                    let info_content = '<div>';
-                    info_content = info_content + '<p>' + '<strong>' + 'Official Title' +'</strong>';
-                    info_content = info_content +  '<br />'+ nearby_loc_nct_title[j] + '</p>';
-                    info_content = info_content + '<p>'+ '<strong>' + 'NCT ID Number'+'</strong>';
-                    info_content = info_content + '<br />' + this_marker_id + '</p>';
-                    info_content = info_content + '</div>';
-                    // let this_marker_content = nearby_loc_nct_title[j];
-                    // add_marker_with_latlng(map, this_marker_latlng,this_marker_content,
-                    add_marker_with_latlng(map, this_marker_latlng,info_content,
-                    icon_url = 'http://maps.google.com/mapfiles/ms/icons/lightblue.png',
-                    this_marker_id, icon_size = 20,
-                    );
-                }
-                add_marker_with_latlng(map, input_zipcode_latlng, 'Your input zip code',
-                                   'http://maps.google.com/mapfiles/kml/pal4/icon57.png')
-                //add_marker_with_address(geocoder, map, '10032',
-                //                                'Your input zip code',
-                //                                'http://maps.google.com/mapfiles/kml/pal4/icon57.png');
-            }
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
             console.log(errorThrown);
@@ -882,6 +707,7 @@ function find_results(working_nct_id_list, np,
 }
 
 // function to handle modal display for trial information
+// fengyang: add zipcode as para
 function generate_trial_info_modal(nct_id) {
     console.log('clicked-on NCT ID: ' + nct_id);
 
@@ -907,8 +733,6 @@ function generate_trial_info_modal(nct_id) {
             fac_and_con = data.facilities_and_contacts;
             interventions = data.intervention_names;
             central_contact = data.central_contact;
-            // fengyang: add latlng list
-            location_latlng_list = data.location_latlng;
         })
 
         .done(function () {
@@ -965,64 +789,39 @@ function generate_trial_info_modal(nct_id) {
             }
 
             // managing recruiting locations and associated contacts
+            change_previous_marker_icon(marker_list.slice(1)); //fengyang: change all previous markers color except the input one
+            let num_add_marker = 0;
+            // setTimeout(function(){
+            //    alert("Hello"); }, 3000);
             for (var i = 0; i < fac_and_con.length; i++) {
                 console.log('working on :' + fac_and_con[i]);
                 new_div = build_location_div(fac_and_con[i]);
                 $(new_div).appendTo('#tabs-lo');
             }
-
-            //fengyang: change all previous markers color except the input one
-            // add marker to locations nearby
-            change_previous_marker_icon(marker_list.slice(1));
-            let num_add_marker = 0;
-
-            let marker_list_current_tab = [];
-            let info_list_current_tab = [];
-            let marker_index_list_current_tab = [];
-            for (let i = 0; i < fac_and_con.length; i++) {
+            for (var i = 0; i < fac_and_con.length; i++) {
             //fengyang add location map when click
-                let fac_zip = fac_and_con[i][3].substring(0, 5);
-                let fac_info = fac_and_con[i]
-                // check if zip is nearby/within the boundary
-                // need to add a var to import the nearby zipcode list: nearby_zip_code
-                if(nearby_zip_list.includes(fac_zip)){
-                    // console.log('marker by click');
-                    num_add_marker = num_add_marker+1;
-                    // create info for infowindow: official_title, nct_id
-                    let info_content = '<div>';
-                    info_content = info_content + '<p>' + '<strong>' + 'Official Title' +'</strong>';
-                    info_content = info_content +  '<br />'+ official_title + '</p>';
-                    info_content = info_content + '<p>'+ '<strong>' + 'NCT ID Number'+'</strong>';
-                    info_content = info_content + '<br />' + nct_id + '</p>';
-                    info_content = info_content + '<p>'+ '<strong>' + 'Location: '+ fac_info[0] + '</strong>'+'<br />';
-                    info_content = info_content +  fac_info[1] + ', ' + fac_info[2] + ' ' + fac_info[3] + '</p>';
-                    info_content = info_content + '</div>';
-                    marker_list_current_tab.push(fac_zip); //fengyang: do not use zip code to geocode anymore
-                    info_list_current_tab.push(info_content);
-                    marker_index_list_current_tab.push(i);
-                    }
-            }
-            // fengyang new: location_latlng_list
-            if (info_list_current_tab.length>0){
-                if(location_latlng_list.length>0){//if there are latlng records in pickle
-                for (let j = 0; j < info_list_current_tab.length; j++){
-                    let this_marker_latlng_index = marker_index_list_current_tab[j];
-                    let this_marker_latlng = location_latlng_list[this_marker_latlng_index];
-                    add_marker_with_latlng(map, this_marker_latlng,
-                                           info_content=info_list_current_tab[j])
-                }
-                } else {
-                setTimeout(function(){
-                add_10_markers_each_time(marker_list_current_tab, info_list_current_tab, 10000);}, 0);
-                console.log('Find latlng by Geocode API.')
+            let fac_zip = fac_and_con[i][3].substring(0, 5);
+            let fac_info = fac_and_con[i]
+            // console.log(nearby_zip_list.includes(fac_zip))
+            // check if zip is nearby/within the boundary
+            // need to add a var to import the nearby zipcode list: nearby_zip_code
+            if(nearby_zip_list.includes(fac_zip)){
+                console.log('marker by click');
+                num_add_marker = num_add_marker+1;
+                // create info for infowindow: official_title, nct_id
+                let info_content = '<div>';
+                info_content = info_content + '<p>' + '<strong>' + 'Official Title' +'</strong>';
+                info_content = info_content +  '<br />'+ official_title + '</p>';
+                info_content = info_content + '<p>'+ '<strong>' + 'NCT ID Number'+'</strong>';
+                info_content = info_content + '<br />' + nct_id + '</p>';
+                info_content = info_content + '<p>'+ '<strong>' + 'Location: '+ fac_info[0] + '</strong>'+'<br />';
+                info_content = info_content +  fac_info[1] + ', ' + fac_info[2] + ' ' + fac_info[3] + '</p>';
+                info_content = info_content + '</div>';
+                add_marker_with_address(geocoder, map, fac_zip, info_content);
+                // add_marker_with_address(geocoder, map, fac_and_con[i][1] + ', ' + fac_and_con[i][2] + ' ' + fac_and_con[i][3]);
                 }
             }
-
-
-            // add_marker_with_latlng(resultsMap, latlng, info_content='', icon_url = '')
-
-            //setTimeout(function(){
-            //add_10_markers_each_time(marker_list_current_tab, info_list_current_tab, 10000);}, 0);
+            console.log('num of added marker: '+ num_add_marker); //fengyang
 
             document.getElementById("modal_ctgov_link").href = "http://clinicaltrials.gov/ct2/show/" + nct_id;
 
@@ -1119,8 +918,7 @@ function sort_email_phone(phone_orig, email_orig) {
 
 
 // function to output the search results
-function show_qfilter_results(working_nct_id_list, npag, nct_details_for_this_page, size_of_active_trials,
-        ) {
+function show_qfilter_results(working_nct_id_list, npag, nct_details_for_this_page, size_of_active_trials) {
     sout = result_content(nct_details_for_this_page);
     // sout += '<tr><td colspan="3"><p id="nav_search">'
     np = parseInt(npag);
@@ -1132,8 +930,6 @@ function show_qfilter_results(working_nct_id_list, npag, nct_details_for_this_pa
     if (np > 1) {
         $('#fprev').unbind('click');
         $('#fprev').bind('click', function () {
-            //fengyang: clear markers before page changes
-            clear_marker();
             find_results(working_nct_id_list, parseInt(npag) - 1);
             $(document).scrollTop(0);
         });
@@ -1145,9 +941,6 @@ function show_qfilter_results(working_nct_id_list, npag, nct_details_for_this_pa
     if (np + 1 <= pmax) {
         $('#fnext').unbind('click');
         $('#fnext').bind('click', function () {
-              //fengyang: clear markers before page changes
-              clear_marker();
-            // add para find_results
             find_results(working_nct_id_list, parseInt(npag) + 1);
             $(document).scrollTop(0);
         });
@@ -1334,6 +1127,10 @@ $(document).ready(function () {
             }
         }
     });
+    //fengyang: add zipcode list and default zip
+
+    // var nearby_zip_list = [];
+    // var input_zip = false;
     // search
     $('#search_button').bind('click',
         function () {
@@ -1353,9 +1150,8 @@ $(document).ready(function () {
             let trial_type = $('#trial_type').val();
             let active_restriction = $('#active_trial_restriction').is(':checked');
             let keyword_search = $('#keyword_search_terms').val();
-            // fengyang
-            input_miles_list.push(parseInt(input_range));
-
+            // fengyang: add global input zip
+            // input_zip = input_locn;
             var vz = false;
             $.getJSON($SCRIPT_ROOT + '/_check_homepage_parameters', {
                     locn: input_locn,
@@ -1379,7 +1175,7 @@ $(document).ready(function () {
                     //console.log(data.nearby_zip_list);
                     // nearby_zip_code = data.nearby_zip_code;
                 })
-
+                //fengyang function()
                 .done(function() {
                     console.log('is zip valid: ' + vz);
                     console.log('nearby length: ' + zct);
@@ -1403,14 +1199,15 @@ $(document).ready(function () {
                         $('#search_results_container').show();
                         //fengyang
                         let input_zip = $('#location_terms').val();
-                        geocode_marker_with_address(geocoder, map, input_zip.toString(),
-                                                    'Your input zip code: '+ input_zip,
+                        // console.log(input_zip);
+                        add_marker_with_address(geocoder, map, input_zip.toString(),
+                                                'Your input zip code: '+ input_zip,
                                                 'http://maps.google.com/mapfiles/kml/pal4/icon57.png');
-
-                        //add_marker_with_address(geocoder, map, input_zip.toString(),
-                        //                        'Your input zip code: '+ input_zip,
-                        //                        'http://maps.google.com/mapfiles/kml/pal4/icon57.png');
-
+                        // $('#nearby_zip_list').val(data.nearby_zip_list);
+                        // nearby_zip_list = nearby_zip_list;
+                        // console.log('nearby_zip_list set')
+                        // return(nearby_zip_list)
+                        //fengyang end
                         $(document).scrollTop(0);
                     } else {
                         let err_string = '';
@@ -1620,23 +1417,15 @@ $(document).ready(function () {
     $(document).on("click", "a.trial_listing_header" , function() {
         input_nct = $(this).attr('name');
         console.log('registered click: ' + input_nct)
+        //fengyang: add para nearby_zip_code;
+        // let nearby_zip_list = $('#nearby_zip_list').val();
+        // console.log("nearby_zip_code in click list item");
+        // console.log(nearby_zip_list); //undefined
+        // generate_trial_info_modal(input_nct, nearby_zip_list);
         generate_trial_info_modal(input_nct);
         return false;
     });
 
-    $(document).on("mouseover", "a.trial_listing_header" , function() {
-        input_nct = $(this).attr('name');
-        // console.log('registered click: ' + input_nct)
-        selectMarker(input_nct, 'start');
-        return false;
-    });
-    $(document).on("mouseout", "a.trial_listing_header" , function() {
-        input_nct = $(this).attr('name');
-        // console.log('registered click: ' + input_nct)
-        selectMarker(input_nct, 'stop');
-        return false;
-    });
-    ////sout += 'onmouseover="selectMarker(' + 'nct[k][0]' + ',\'start\');" onmouseout="selectMarker(' + nct[k][0] + ',\'stop\');'; //">+ ';
     // When the user clicks on <span> (x), close the modal
     span.onclick = function() {
       modal.style.display = "none";
