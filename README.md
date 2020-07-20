@@ -115,5 +115,5 @@ def index ():
 0.0.1
 
 ## Authors
-Cong Liu, Chi Yuan, Yingcheng Sun, Hao Liu, Alex Butler, Chunhua Weng
+Cong Liu, Chi Yuan, Yingcheng Sun, Hao Liu, Alex Butler, Fengyang Lin, Chunhua Weng  
 amb2453@cumc.columbia.edu
