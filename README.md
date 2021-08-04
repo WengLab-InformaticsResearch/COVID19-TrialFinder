@@ -1,5 +1,6 @@
 # COVID-19 Trial Finder
-COVID-19 Trial Finder implementation using flask
+COVID-19 Trial Finder implementation using flask. 
+URL: http://35.202.46.162/
 
 ### Install and deploy
 ###### Enviroment
