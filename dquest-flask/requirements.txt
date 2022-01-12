@@ -6,7 +6,7 @@ Flask-WTF==0.14.2
 itsdangerous==1.1.0
 Jinja2==2.11.3
 MarkupSafe==1.1.1
-numpy==1.16.2
+numpy==1.21
 pandas==0.24.2
 psycopg2==2.8.1
 pyodbc==4.0.26
